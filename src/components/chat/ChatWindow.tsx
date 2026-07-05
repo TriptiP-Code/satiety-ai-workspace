@@ -6,15 +6,30 @@ import WelcomeSection from "./WelcomeSection";
 
 function ChatWindow() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleSendMessage(content: string) {
-  const newMessage: Message = {
+function handleSendMessage(content: string) {
+  const userMessage: Message = {
     id: crypto.randomUUID(),
     role: "user",
     content,
   };
 
-  setMessages((prev) => [...prev, newMessage]);
+  setMessages((prev) => [...prev, userMessage]);
+
+  setIsLoading(true);
+
+  setTimeout(() => {
+    const aiMessage: Message = {
+      id: crypto.randomUUID(),
+      role: "assistant",
+      content: "Hello! I'm Satiety. AI integration is coming soon 🚀",
+    };
+
+    setMessages((prev) => [...prev, aiMessage]);
+
+    setIsLoading(false);
+  }, 1000);
 }
 
   return (
@@ -22,10 +37,13 @@ function ChatWindow() {
       {messages.length === 0 ? (
         <WelcomeSection />
       ) : (
-        <MessageList messages={messages} />
+<MessageList
+  messages={messages}
+  isLoading={isLoading}
+/>
       )}
 
-      <ChatInput onSendMessage={handleSendMessage}/>
+      <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading}/>
     </div>
   );
 }
