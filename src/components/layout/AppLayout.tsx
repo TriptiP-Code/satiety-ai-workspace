@@ -20,9 +20,25 @@ const [activeConversationId, setActiveConversationId] = useState(
 );
 
 const [isLoading, setIsLoading] = useState(false);
+function handleNewChat() {
+  const newConversation: Conversation = {
+    id: crypto.randomUUID(),
+    title: `Chat ${conversations.length + 1}`,
+    messages: [],
+  };
+
+  setConversations((prev) => [...prev, newConversation]);
+
+  setActiveConversationId(newConversation.id);
+}
   return (
     <div className="flex h-screen bg-slate-950 text-slate-100">
-      <Sidebar />
+      <Sidebar
+  conversations={conversations}
+  activeConversationId={activeConversationId}
+  onNewChat={handleNewChat}
+  onSelectConversation={setActiveConversationId}
+/>
 
       <div className="flex flex-1 flex-col">
         <Header />
