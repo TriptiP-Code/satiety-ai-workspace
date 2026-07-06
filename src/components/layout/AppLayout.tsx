@@ -77,7 +77,6 @@ function AppLayout() {
   }
 
   function handleDeleteConversation(id: string) {
-    // If only one conversation exists, create a fresh one
     if (conversations.length === 1) {
       const newConversation: Conversation = {
         id: crypto.randomUUID(),
@@ -90,19 +89,43 @@ function AppLayout() {
       return;
     }
 
-    const remainingConversations = conversations.filter(
+    const index = conversations.findIndex(
+      (conversation) => conversation.id === id
+    );
+
+    const remaining = conversations.filter(
       (conversation) => conversation.id !== id
     );
 
-    setConversations(remainingConversations);
+    setConversations(remaining);
 
-    // If the deleted conversation was active,
-    // switch to the first remaining conversation.
     if (activeConversationId === id) {
-      setActiveConversationId(
-        remainingConversations[0].id
-      );
+      const nextConversation =
+        remaining[index] ?? remaining[index - 1];
+
+      setActiveConversationId(nextConversation.id);
     }
+  }
+
+  function handleRenameConversation(
+    id: string,
+    newTitle: string
+  ) {
+    const title =
+      newTitle.trim() === ""
+        ? "New Chat"
+        : newTitle.trim();
+
+    setConversations((prev) =>
+      prev.map((conversation) =>
+        conversation.id === id
+          ? {
+              ...conversation,
+              title,
+            }
+          : conversation
+      )
+    );
   }
 
   return (
@@ -111,8 +134,9 @@ function AppLayout() {
         conversations={conversations}
         activeConversationId={activeConversationId}
         onNewChat={handleNewChat}
-        onSelectConversation={setActiveConversationId}
         onDeleteConversation={handleDeleteConversation}
+        onRenameConversation={handleRenameConversation}
+        onSelectConversation={setActiveConversationId}
       />
 
       <div className="flex flex-1 flex-col">
