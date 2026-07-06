@@ -18,6 +18,9 @@ function AppLayout() {
 const [activeConversationId, setActiveConversationId] = useState(
   conversations[0].id
 );
+const activeConversation = conversations.find(
+  (conversation) => conversation.id === activeConversationId
+);
 
 const [isLoading, setIsLoading] = useState(false);
 function handleNewChat() {
@@ -44,7 +47,15 @@ function handleNewChat() {
         <Header />
 
         <main className="flex-1 overflow-hidden">
-          <Outlet />
+          <Outlet
+  context={{
+    activeConversation,
+    conversations,
+    setConversations,
+    isLoading,
+    setIsLoading,
+  }}
+/>
         </main>
       </div>
     </div>

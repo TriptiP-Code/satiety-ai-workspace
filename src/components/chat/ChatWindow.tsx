@@ -3,10 +3,29 @@ import type { Message } from "../../types/chat";
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 import WelcomeSection from "./WelcomeSection";
+import type { Conversation } from "../../types/conversation";
 
-function ChatWindow() {
+interface ChatWindowProps {
+  activeConversation?: Conversation;
+  conversations: Conversation[];
+  setConversations: React.Dispatch<
+    React.SetStateAction<Conversation[]>
+  >;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+}
+
+function ChatWindow({
+  activeConversation,
+  conversations,
+  setConversations,
+  isLoading,
+  setIsLoading,
+}: ChatWindowProps)  {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  
 
 function handleSendMessage(content: string) {
   const userMessage: Message = {

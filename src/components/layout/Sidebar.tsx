@@ -1,5 +1,6 @@
 import Button from "../ui/Button";
 import type { Conversation } from "../../types/conversation";
+import ConversationList from "../sidebar/ConversationList";
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -35,21 +36,11 @@ function Sidebar({conversations,activeConversationId,onNewChat,onSelectConversat
           Recent Chats
         </p>
 
-<div className="space-y-2">
-  {conversations.map((conversation) => (
-    <button
-      key={conversation.id}
-      onClick={() => onSelectConversation(conversation.id)}
-      className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${
-        activeConversationId === conversation.id
-          ? "bg-indigo-600 text-white"
-          : "text-slate-300 hover:bg-slate-800"
-      }`}
-    >
-      {conversation.title}
-    </button>
-  ))}
-</div>
+<ConversationList
+  conversations={conversations}
+  activeConversationId={activeConversationId}
+  onSelectConversation={onSelectConversation}
+/>
       </div>
 
       {/* Footer */}
