@@ -21,9 +21,11 @@ function ConversationList({
 }: ConversationListProps) {
   if (conversations.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
-        No conversations yet.
-      </p>
+      <div className="mt-10 text-center">
+        <p className="text-sm text-slate-500">
+          No conversations found.
+        </p>
+      </div>
     );
   }
 
