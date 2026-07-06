@@ -1,15 +1,18 @@
+import { Trash2 } from "lucide-react";
 import type { Conversation } from "../../types/conversation";
 
 interface ConversationListProps {
   conversations: Conversation[];
   activeConversationId: string;
   onSelectConversation: (id: string) => void;
+  onDeleteConversation: (id: string) => void;
 }
 
 function ConversationList({
   conversations,
   activeConversationId,
   onSelectConversation,
+  onDeleteConversation,
 }: ConversationListProps) {
   if (conversations.length === 0) {
     return (
@@ -22,17 +25,32 @@ function ConversationList({
   return (
     <div className="space-y-2">
       {conversations.map((conversation) => (
-        <button
+        <div
           key={conversation.id}
-          onClick={() => onSelectConversation(conversation.id)}
-          className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${
+          className={`group flex items-center justify-between rounded-lg transition ${
             activeConversationId === conversation.id
-              ? "bg-indigo-600 text-white"
-              : "text-slate-300 hover:bg-slate-800"
+              ? "bg-indigo-600"
+              : "hover:bg-slate-800"
           }`}
         >
-          {conversation.title}
-        </button>
+          <button
+            onClick={() => onSelectConversation(conversation.id)}
+            className={`flex-1 truncate px-3 py-2 text-left text-sm ${
+              activeConversationId === conversation.id
+                ? "text-white"
+                : "text-slate-300"
+            }`}
+          >
+            {conversation.title}
+          </button>
+
+          <button
+            onClick={() => onDeleteConversation(conversation.id)}
+            className="mr-2 hidden rounded p-1 text-slate-400 hover:bg-red-500 hover:text-white group-hover:block"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
       ))}
     </div>
   );

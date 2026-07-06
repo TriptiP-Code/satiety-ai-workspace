@@ -17,7 +17,14 @@ interface OutletContext {
 function HomePage() {
   const context = useOutletContext<OutletContext>();
 
-  return <ChatWindow {...context} />;
+  return (
+  <ChatWindow
+    activeConversation={context.activeConversation}
+    setConversations={context.setConversations}
+    isLoading={context.isLoading}
+    setIsLoading={context.setIsLoading}
+  />
+);
 }
 
 export default HomePage;

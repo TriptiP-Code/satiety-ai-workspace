@@ -7,9 +7,16 @@ interface SidebarProps {
   activeConversationId: string;
   onNewChat: () => void;
   onSelectConversation: (id: string) => void;
+  onDeleteConversation: (id: string) => void;
 }
 
-function Sidebar({conversations,activeConversationId,onNewChat,onSelectConversation}: SidebarProps) {
+function Sidebar({
+  conversations,
+  activeConversationId,
+  onNewChat,
+  onSelectConversation,
+  onDeleteConversation,
+}: SidebarProps) {
   return (
     <aside className="flex w-72 flex-col border-r border-slate-800 bg-slate-900">
       {/* Logo */}
@@ -23,7 +30,7 @@ function Sidebar({conversations,activeConversationId,onNewChat,onSelectConversat
         </p>
       </div>
 
-      {/* Actions */}
+      {/* New Chat */}
       <div className="p-4">
         <Button className="w-full" onClick={onNewChat}>
           + New Chat
@@ -36,11 +43,12 @@ function Sidebar({conversations,activeConversationId,onNewChat,onSelectConversat
           Recent Chats
         </p>
 
-<ConversationList
-  conversations={conversations}
-  activeConversationId={activeConversationId}
-  onSelectConversation={onSelectConversation}
-/>
+        <ConversationList
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={onSelectConversation}
+          onDeleteConversation={onDeleteConversation}
+        />
       </div>
 
       {/* Footer */}
