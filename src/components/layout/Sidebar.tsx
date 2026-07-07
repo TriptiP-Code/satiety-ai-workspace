@@ -30,7 +30,7 @@ function Sidebar({
   );
 
   return (
-    <aside className="flex w-72 flex-col border-r border-slate-800 bg-slate-900">
+    <aside className="flex w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-900">
       {/* Logo */}
       <div className="border-b border-slate-800 p-6">
         <h1 className="text-2xl font-bold text-indigo-400">

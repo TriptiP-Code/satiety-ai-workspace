@@ -18,12 +18,15 @@ function HomePage() {
   const context = useOutletContext<OutletContext>();
 
   return (
+    <div className="flex h-full w-full flex-1">
   <ChatWindow
     activeConversation={context.activeConversation}
+    conversations={context.conversations}
     setConversations={context.setConversations}
     isLoading={context.isLoading}
     setIsLoading={context.setIsLoading}
   />
+  </div>
 );
 }
 
