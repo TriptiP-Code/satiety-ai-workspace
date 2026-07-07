@@ -21,7 +21,7 @@ function ChatInput({ onSendMessage, isLoading, }: ChatInputProps) {
   }
 
   return (
-    <div className="border-t border-slate-800 bg-slate-950 p-6">
+    <div className="border-t border-slate-800 bg-slate-950 px-8 py-5">
       <div className="mx-auto flex max-w-4xl items-center gap-3">
 <Button
   variant="secondary"

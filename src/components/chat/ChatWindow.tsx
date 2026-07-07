@@ -102,8 +102,9 @@ function ChatWindow({
     return null;
   }
 
-  return (
-    <div className="flex h-full w-full flex-1 flex-col overflow-hidden">
+return (
+  <div className="flex h-full w-full flex-col">
+    <div className="flex-1 overflow-hidden">
       {activeConversation.messages.length === 0 ? (
         <WelcomeSection />
       ) : (
@@ -112,13 +113,14 @@ function ChatWindow({
           isLoading={isLoading}
         />
       )}
-
-      <ChatInput
-        onSendMessage={handleSendMessage}
-        isLoading={isLoading}
-      />
     </div>
-  );
+
+    <ChatInput
+      onSendMessage={handleSendMessage}
+      isLoading={isLoading}
+    />
+  </div>
+);
 }
 
 export default ChatWindow;

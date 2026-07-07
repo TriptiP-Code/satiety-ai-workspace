@@ -12,12 +12,12 @@ function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div
-      className={`mb-4 flex ${
+      className={`mb-3 flex ${
         isUser ? "justify-end" : "justify-start"
       }`}
     >
 <div
-  className={`w-fit max-w-[85%] rounded-2xl px-4 py-3 ${
+  className={`w-fit max-w-[80%] lg:max-w-[65%] rounded-xl px-4 py-2.5 ${
     isUser
       ? "ml-auto bg-indigo-600 text-white"
       : "bg-slate-800 text-slate-100"

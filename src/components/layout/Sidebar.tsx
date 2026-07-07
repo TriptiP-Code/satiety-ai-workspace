@@ -30,17 +30,19 @@ function Sidebar({
   );
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-900">
+    <aside className="flex w-80 shrink-0 flex-col border-r border-slate-800 bg-slate-900">
       {/* Logo */}
-      <div className="border-b border-slate-800 p-6">
-        <h1 className="text-2xl font-bold text-indigo-400">
-          Satiety
-        </h1>
+<div className="flex h-16 items-center border-b border-slate-800 px-6">
+  <div>
+    <h1 className="text-xl font-bold text-indigo-400">
+      Satiety
+    </h1>
 
-        <p className="mt-1 text-sm text-slate-400">
-          Your AI Workspace
-        </p>
-      </div>
+    <p className="text-xs text-slate-400">
+      Your AI Workspace
+    </p>
+  </div>
+</div>
 
       {/* New Chat */}
       <div className="space-y-4 p-4">
@@ -75,12 +77,12 @@ function Sidebar({
         />
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-slate-800 p-4">
-        <button className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-slate-800">
-          ⚙ Settings
-        </button>
-      </div>
+{/* Footer */}
+<div className="h-[88px] border-t border-slate-800 px-4 flex items-center">
+  <button className="w-full rounded-lg px-3 py-3 text-left text-sm hover:bg-slate-800">
+    ⚙ Settings
+  </button>
+</div>
     </aside>
   );
 }
