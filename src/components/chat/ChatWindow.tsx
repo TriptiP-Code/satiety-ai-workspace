@@ -1,9 +1,11 @@
 import type { Message } from "../../types/chat";
+import type { Conversation } from "../../types/conversation";
+
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 import WelcomeSection from "./WelcomeSection";
-import type { Conversation } from "../../types/conversation";
-import { checkBackendHealth } from "../../services/api";
+
+import { sendMessage } from "../../services/chatApi";
 
 interface ChatWindowProps {
   activeConversation?: Conversation;
@@ -32,6 +34,7 @@ function ChatWindow({
       content,
     };
 
+    // Add user message immediately
     setConversations((prev) =>
       prev.map((conversation) =>
         conversation.id === activeConversation.id
@@ -41,10 +44,7 @@ function ChatWindow({
                 conversation.messages.length === 0
                   ? content.slice(0, 30)
                   : conversation.title,
-              messages: [
-                ...conversation.messages,
-                userMessage,
-              ],
+              messages: [...conversation.messages, userMessage],
             }
           : conversation
       )
@@ -53,12 +53,12 @@ function ChatWindow({
     setIsLoading(true);
 
     try {
-      const data = await checkBackendHealth();
+      const data = await sendMessage(content);
 
       const aiMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: data.message,
+        content: data.reply,
       };
 
       setConversations((prev) =>
@@ -66,20 +66,16 @@ function ChatWindow({
           conversation.id === activeConversation.id
             ? {
                 ...conversation,
-                messages: [
-                  ...conversation.messages,
-                  aiMessage,
-                ],
+                messages: [...conversation.messages, aiMessage],
               }
             : conversation
         )
       );
     } catch (error) {
-      const aiMessage: Message = {
+      const errorMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content:
-          "Unable to connect to backend. Please try again.",
+        content: "⚠ Unable to contact Satiety AI.",
       };
 
       setConversations((prev) =>
@@ -87,28 +83,29 @@ function ChatWindow({
           conversation.id === activeConversation.id
             ? {
                 ...conversation,
-                messages: [
-                  ...conversation.messages,
-                  aiMessage,
-                ],
+                messages: [...conversation.messages, errorMessage],
               }
             : conversation
         )
       );
+
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const messages = activeConversation?.messages ?? [];
+  if (!activeConversation) {
+    return null;
+  }
 
   return (
     <div className="flex h-full flex-col">
-      {messages.length === 0 ? (
+      {activeConversation.messages.length === 0 ? (
         <WelcomeSection />
       ) : (
         <MessageList
-          messages={messages}
+          messages={activeConversation.messages}
           isLoading={isLoading}
         />
       )}
