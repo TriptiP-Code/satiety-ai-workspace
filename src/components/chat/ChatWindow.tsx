@@ -1,12 +1,13 @@
 import type { Message } from "../../types/chat";
-import type { Conversation } from "../../types/conversation";
-
 import ChatInput from "./ChatInput";
 import MessageList from "./MessageList";
 import WelcomeSection from "./WelcomeSection";
+import type { Conversation } from "../../types/conversation";
+import { checkBackendHealth } from "../../services/api";
 
 interface ChatWindowProps {
   activeConversation?: Conversation;
+  conversations: Conversation[];
   setConversations: React.Dispatch<
     React.SetStateAction<Conversation[]>
   >;
@@ -22,9 +23,7 @@ function ChatWindow({
   isLoading,
   setIsLoading,
 }: ChatWindowProps) {
-  const messages = activeConversation?.messages ?? [];
-
-  function handleSendMessage(content: string) {
+  async function handleSendMessage(content: string) {
     if (!activeConversation) return;
 
     const userMessage: Message = {
@@ -34,47 +33,74 @@ function ChatWindow({
     };
 
     setConversations((prev) =>
-      prev.map((conversation) => {
-        if (conversation.id !== activeConversation.id) {
-          return conversation;
-        }
-
-        return {
-          ...conversation,
-          title:
-            conversation.title === "New Chat"
-              ? content.slice(0, 30)
-              : conversation.title,
-          messages: [...conversation.messages, userMessage],
-        };
-      })
+      prev.map((conversation) =>
+        conversation.id === activeConversation.id
+          ? {
+              ...conversation,
+              title:
+                conversation.messages.length === 0
+                  ? content.slice(0, 30)
+                  : conversation.title,
+              messages: [
+                ...conversation.messages,
+                userMessage,
+              ],
+            }
+          : conversation
+      )
     );
 
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const data = await checkBackendHealth();
+
       const aiMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Hello! I'm Satiety. AI integration is coming soon 🚀",
+        content: data.message,
       };
 
       setConversations((prev) =>
-        prev.map((conversation) => {
-          if (conversation.id !== activeConversation.id) {
-            return conversation;
-          }
-
-          return {
-            ...conversation,
-            messages: [...conversation.messages, aiMessage],
-          };
-        })
+        prev.map((conversation) =>
+          conversation.id === activeConversation.id
+            ? {
+                ...conversation,
+                messages: [
+                  ...conversation.messages,
+                  aiMessage,
+                ],
+              }
+            : conversation
+        )
       );
+    } catch (error) {
+      const aiMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content:
+          "Unable to connect to backend. Please try again.",
+      };
 
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.id === activeConversation.id
+            ? {
+                ...conversation,
+                messages: [
+                  ...conversation.messages,
+                  aiMessage,
+                ],
+              }
+            : conversation
+        )
+      );
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
+
+  const messages = activeConversation?.messages ?? [];
 
   return (
     <div className="flex h-full flex-col">
