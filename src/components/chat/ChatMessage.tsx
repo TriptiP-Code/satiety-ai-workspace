@@ -1,4 +1,6 @@
 import type { Message } from "../../types/chat";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
   message: Message;
@@ -19,8 +21,13 @@ function ChatMessage({ message }: ChatMessageProps) {
             ? "bg-indigo-600 text-white"
             : "bg-slate-800 text-slate-100"
         }`}
-      >
+      ><div className="markdown">
+    <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+    >
         {message.content}
+    </ReactMarkdown>
+</div>
       </div>
     </div>
   );

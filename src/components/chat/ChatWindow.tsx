@@ -53,7 +53,10 @@ function ChatWindow({
     setIsLoading(true);
 
     try {
-      const data = await sendMessage(content);
+      const data = await sendMessage([
+  ...activeConversation.messages,
+  userMessage,
+]);
 
       const aiMessage: Message = {
         id: crypto.randomUUID(),
