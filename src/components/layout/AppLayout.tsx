@@ -48,6 +48,8 @@ function AppLayout() {
     return crypto.randomUUID();
   });
 
+  const [activeWorkspace, setActiveWorkspace] = useState("General");
+
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -70,17 +72,39 @@ function AppLayout() {
         conversation.id === activeConversationId
     ) ?? conversations[0];
 
-  function handleNewChat() {
-    const newConversation: Conversation = {
-      id: crypto.randomUUID(),
-      title: "New Chat",
-      workspace: "General",
-      messages: [],
-    };
+function handleNewWorkspace() {
+  const name = prompt("Workspace name");
 
-    setConversations((prev) => [...prev, newConversation]);
-    setActiveConversationId(newConversation.id);
-  }
+  if (!name?.trim()) return;
+
+  const workspace = name.trim();
+
+  const newConversation: Conversation = {
+    id: crypto.randomUUID(),
+    title: "New Chat",
+    workspace,
+    messages: [],
+  };
+
+  setConversations((prev) => [...prev, newConversation]);
+
+  setActiveWorkspace(workspace);
+
+  setActiveConversationId(newConversation.id);
+}
+
+function handleNewChat() {
+  const newConversation: Conversation = {
+    id: crypto.randomUUID(),
+    title: "New Chat",
+    workspace: activeWorkspace,
+    messages: [],
+  };
+
+  setConversations((prev) => [...prev, newConversation]);
+
+  setActiveConversationId(newConversation.id);
+}
 
   function handleDeleteConversation(id: string) {
     if (conversations.length === 1) {
@@ -139,11 +163,23 @@ function AppLayout() {
     <div className="flex h-screen bg-slate-950 text-slate-100">
       <Sidebar
         conversations={conversations}
+        activeWorkspace={activeWorkspace}
         activeConversationId={activeConversationId}
         onNewChat={handleNewChat}
+        onNewWorkspace={handleNewWorkspace}
         onDeleteConversation={handleDeleteConversation}
         onRenameConversation={handleRenameConversation}
-        onSelectConversation={setActiveConversationId}
+        onSelectConversation={(id) => {
+  setActiveConversationId(id);
+
+  const conversation = conversations.find(
+    (c) => c.id === id
+  );
+
+  if (conversation) {
+    setActiveWorkspace(conversation.workspace);
+  }
+}}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">

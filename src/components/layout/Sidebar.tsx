@@ -4,11 +4,14 @@ import Button from "../ui/Button";
 import type { Conversation } from "../../types/conversation";
 import ConversationList from "../sidebar/ConversationList";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 
 interface SidebarProps {
   conversations: Conversation[];
   activeConversationId: string;
+  activeWorkspace: string;
   onNewChat: () => void;
+  onNewWorkspace: () => void;
   onDeleteConversation: (id: string) => void;
   onRenameConversation: (id: string, title: string) => void;
   onSelectConversation: (id: string) => void;
@@ -17,7 +20,9 @@ interface SidebarProps {
 function Sidebar({
   conversations,
   activeConversationId,
+  activeWorkspace,
   onNewChat,
+  onNewWorkspace,
   onDeleteConversation,
   onRenameConversation,
   onSelectConversation,
@@ -62,6 +67,10 @@ function Sidebar({
         <Button className="w-full" onClick={onNewChat}>
           + New Chat
         </Button>
+        <Button variant="secondary" className="w-full" onClick={onNewWorkspace}>
+          <FolderPlus size={18} />
+          <span className="ml-2">New Workspace</span>
+        </Button>
 
         <input
           type="text"
@@ -89,7 +98,12 @@ function Sidebar({
                       [workspace]: !prev[workspace],
                     }))
                   }
-                  className="mb-2 flex w-full items-center gap-2 rounded-md px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:bg-slate-800"
+                  className={`mb-2 flex w-full items-center gap-2 rounded-md px-2 py-1 text-xs font-semibold uppercase tracking-wide transition
+${
+  activeWorkspace === workspace
+    ? "bg-slate-800 text-indigo-400"
+    : "text-slate-500 hover:bg-slate-800"
+}`}
                 >
                   {collapsedWorkspaces[workspace] ? (
                     <ChevronRight size={14} />
