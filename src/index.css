@@ -7,20 +7,16 @@
 .markdown pre {
   overflow-x: auto;
   max-width: 100%;
-  padding: 1rem;
-  border-radius: 12px;
-  background: #1e293b;
 }
 
 .markdown code {
-  white-space: pre;
+  font-family: monospace;
 }
 
 .markdown table {
   display: block;
   overflow-x: auto;
   max-width: 100%;
-  border-collapse: collapse;
 }
 
 .markdown th,
