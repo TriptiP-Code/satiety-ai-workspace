@@ -3,74 +3,46 @@ import type { Message } from "../../types/chat";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import CodeBlock from "./CodeBlock";
+import MarkdownComponents from "./MarkdownComponents";
+import CopyButton from "./CopyButton";
 
 interface ChatMessageProps {
   message: Message;
 }
 
-function ChatMessage({
-  message,
-}: ChatMessageProps) {
+function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
 
   return (
     <div
-      className={`mb-4 flex ${
-        isUser
-          ? "justify-end"
-          : "justify-start"
+      className={`mb-6 flex ${
+        isUser ? "justify-end" : "justify-start"
       }`}
     >
-      <div
-        className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-          isUser
-            ? "bg-indigo-600 text-white"
-            : "bg-slate-800 text-slate-100"
-        }`}
-      >
-        <div className="markdown">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              code(props) {
-                const {
-                  children,
-                  className,
-                  ...rest
-                } = props;
+      <div className="max-w-4xl w-full">
+        <div className="mb-2 flex items-center justify-between px-1">
+          <span className="text-xs font-semibold text-slate-400">
+            {isUser ? "You" : "Satiety AI"}
+          </span>
 
-                const match = /language-(\w+)/.exec(
-                  className || ""
-                );
+          <CopyButton text={message.content} />
+        </div>
 
-                const value = String(children).replace(
-                  /\n$/,
-                  ""
-                );
-
-                if (match) {
-                  return (
-                    <CodeBlock
-                      language={match[1]}
-                      value={value}
-                    />
-                  );
-                }
-
-                return (
-                  <code
-                    className="rounded bg-slate-700 px-1 py-0.5"
-                    {...rest}
-                  >
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {message.content}
-          </ReactMarkdown>
+        <div
+          className={`rounded-2xl px-5 py-4 ${
+            isUser
+              ? "bg-indigo-600 text-white"
+              : "bg-slate-800 text-slate-100"
+          }`}
+        >
+          <div className="markdown">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={MarkdownComponents}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
     </div>
