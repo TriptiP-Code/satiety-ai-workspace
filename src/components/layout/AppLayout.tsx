@@ -15,12 +15,17 @@ function AppLayout() {
 
     if (saved) {
       return JSON.parse(saved);
+      return parsed.map((conversation: any) => ({
+      ...conversation,
+      workspace: conversation.workspace ?? "General",
+    }));
     }
 
     return [
       {
         id: crypto.randomUUID(),
         title: "New Chat",
+        workspace: "General",
         messages: [],
       },
     ];
@@ -69,6 +74,7 @@ function AppLayout() {
     const newConversation: Conversation = {
       id: crypto.randomUUID(),
       title: "New Chat",
+      workspace: "General",
       messages: [],
     };
 
@@ -81,6 +87,7 @@ function AppLayout() {
       const newConversation: Conversation = {
         id: crypto.randomUUID(),
         title: "New Chat",
+        workspace: "General",
         messages: [],
       };
 
