@@ -51,8 +51,8 @@ function Sidebar({
 }: SidebarProps) {
   const [search, setSearch] = useState("");
 
-  const [collapsedWorkspaces, setCollapsedWorkspaces] =
-    useState<Record<string, boolean>>({});
+const [expandedWorkspaceId, setExpandedWorkspaceId] =
+  useState<string | null>(null);
 
   const filteredConversations = conversations.filter((conversation) =>
     conversation.title
@@ -125,37 +125,39 @@ function Sidebar({
           {groupedWorkspaces.map(
             ({ workspace, conversations }) => (
               <div key={workspace.id}>
-                <button
-                  onClick={() =>
-                    setCollapsedWorkspaces(
-                      (prev) => ({
-                        ...prev,
-                        [workspace.id]:
-                          !prev[workspace.id],
-                      })
-                    )
-                  }
-                  className={`mb-2 flex w-full items-center gap-2 rounded-md px-2 py-2 text-xs font-semibold uppercase transition ${
-                    activeWorkspace ===
-                    workspace.name
-                      ? "bg-slate-800 text-indigo-400"
-                      : "text-slate-500 hover:bg-slate-800"
-                  }`}
-                >
-                  {collapsedWorkspaces[
-                    workspace.id
-                  ] ? (
-                    <ChevronRight size={14} />
-                  ) : (
-                    <ChevronDown size={14} />
-                  )}
+<button
+  onClick={() => {
+    onSelectWorkspace(workspace.id);
 
-                  {workspace.name}
-                </button>
+    setExpandedWorkspaceId((prev) =>
+      prev === workspace.id
+        ? null
+        : workspace.id
+    );
+  }}
+  className={`mb-2 flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition ${
+    selectedWorkspaceId === workspace.id
+      ? "bg-slate-800 text-indigo-400"
+      : "text-slate-400 hover:bg-slate-800"
+  }`}
+>
+  {expandedWorkspaceId === workspace.id ? (
+    <ChevronDown size={16} />
+  ) : (
+    <ChevronRight size={16} />
+  )}
 
-                {!collapsedWorkspaces[
-                  workspace.id
-                ] && (
+  <span className="text-lg">
+    {expandedWorkspaceId === workspace.id
+      ? "📂"
+      : "📁"}
+  </span>
+
+  <span className="truncate">
+    {workspace.name}
+  </span>
+</button>
+{expandedWorkspaceId === workspace.id && (
                   <ConversationList
                     conversations={
                       conversations

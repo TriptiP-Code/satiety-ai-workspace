@@ -188,24 +188,32 @@ function handleNewWorkspace() {
   ]);
 
   setActiveWorkspaceId(workspace.id);
+  setSelectedWorkspaceId(workspace.id);
 
   setActiveConversationId(newConversation.id);
 }
 
 function handleNewChat() {
+  const workspace =
+    workspaces.find(
+      (w) => w.id === selectedWorkspaceId
+    ) ?? workspaces[0];
+
   const newConversation: Conversation = {
     id: crypto.randomUUID(),
     title: "New Chat",
-    workspace: activeWorkspace.name,
-    workspaceId: activeWorkspace.id,
+    workspace: workspace.name,
+    workspaceId: workspace.id,
     messages: [],
   };
 
-  setConversations((prev) => [...prev, newConversation]);
+  setConversations((prev) => [
+    ...prev,
+    newConversation,
+  ]);
 
   setActiveConversationId(newConversation.id);
 }
-
   function handleDeleteConversation(id: string) {
     if (conversations.length === 1) {
       const newConversation: Conversation = {
@@ -265,7 +273,8 @@ function handleNewChat() {
         conversations={conversations}
         workspaces={workspaces}
         activeWorkspace={activeWorkspace.name}
-        selectedWorkspaceId={selectedWorkspaceId}onSelectWorkspace={setSelectedWorkspaceId}
+        selectedWorkspaceId={selectedWorkspaceId}
+        onSelectWorkspace={setSelectedWorkspaceId}
         activeConversationId={activeConversationId}
         onNewChat={handleNewChat}
         onNewWorkspace={handleNewWorkspace}
@@ -273,16 +282,6 @@ function handleNewChat() {
         onRenameConversation={handleRenameConversation}
         onSelectConversation={(id) => {
   setActiveConversationId(id);
-
-  const conversation = conversations.find(
-    (c) => c.id === id
-  );
-
-if (conversation) {
-  setActiveWorkspaceId(
-    conversation.workspaceId
-  );
-}
 }}
       />
 
