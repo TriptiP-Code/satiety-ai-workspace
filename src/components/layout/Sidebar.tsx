@@ -60,13 +60,21 @@ const [expandedWorkspaceId, setExpandedWorkspaceId] =
       .includes(search.toLowerCase())
   );
 
-  const groupedWorkspaces = workspaces.map((workspace) => ({
-    workspace,
-    conversations: filteredConversations.filter(
+const groupedWorkspaces = workspaces.map((workspace) => {
+  const workspaceConversations =
+    filteredConversations.filter(
       (conversation) =>
         conversation.workspaceId === workspace.id
-    ),
-  }));
+    );
+
+  return {
+    workspace,
+    conversations: workspaceConversations,
+    hasSearchResult:
+      search.trim() !== "" &&
+      workspaceConversations.length > 0,
+  };
+});
 
   return (
     <aside className="flex w-80 shrink-0 flex-col border-r border-slate-800 bg-slate-900">
@@ -123,7 +131,11 @@ const [expandedWorkspaceId, setExpandedWorkspaceId] =
 
         <div className="space-y-4">
           {groupedWorkspaces.map(
-            ({ workspace, conversations }) => (
+  ({
+    workspace,
+    conversations,
+    hasSearchResult,
+  }) => (
               <div key={workspace.id}>
 <button
   onClick={() => {
@@ -141,23 +153,32 @@ const [expandedWorkspaceId, setExpandedWorkspaceId] =
       : "text-slate-400 hover:bg-slate-800"
   }`}
 >
-  {expandedWorkspaceId === workspace.id ? (
+  {(
+  expandedWorkspaceId === workspace.id ||
+  hasSearchResult
+) ? (
     <ChevronDown size={16} />
   ) : (
     <ChevronRight size={16} />
   )}
 
   <span className="text-lg">
-    {expandedWorkspaceId === workspace.id
-      ? "📂"
-      : "📁"}
+    {(
+  expandedWorkspaceId === workspace.id ||
+  hasSearchResult
+)
+  ? "📂"
+  : "📁"}
   </span>
 
   <span className="truncate">
     {workspace.name}
   </span>
 </button>
-{expandedWorkspaceId === workspace.id && (
+{(
+  expandedWorkspaceId === workspace.id ||
+  hasSearchResult
+) && (
                   <ConversationList
                     conversations={
                       conversations
