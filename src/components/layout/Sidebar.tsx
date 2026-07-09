@@ -7,6 +7,7 @@ import type { Conversation } from "../../types/conversation";
 import type { Workspace } from "../../types/workspace";
 
 import ConversationList from "../sidebar/ConversationList";
+import WorkspaceSection from "../sidebar/WorkspaceSection";
 
 interface SidebarProps {
   workspaces: Workspace[];
@@ -20,9 +21,18 @@ interface SidebarProps {
   onNewChat: () => void;
   onNewWorkspace: () => void;
 
-  onSelectWorkspace: (workspaceId: string) => void;
+onSelectWorkspace: (workspaceId: string) => void;
 
-  onDeleteConversation: (id: string) => void;
+onRenameWorkspace: (
+  workspaceId: string,
+  newName: string
+) => void;
+
+onDeleteWorkspace: (
+  workspaceId: string
+) => void;
+
+onDeleteConversation: (id: string) => void;
   onRenameConversation: (
     id: string,
     title: string
@@ -43,10 +53,13 @@ function Sidebar({
   onNewChat,
   onNewWorkspace,
 
-  onSelectWorkspace,
+onSelectWorkspace,
 
-  onDeleteConversation,
-  onRenameConversation,
+onRenameWorkspace,
+onDeleteWorkspace,
+
+onDeleteConversation,
+onRenameConversation,
   onSelectConversation,
 }: SidebarProps) {
   const [search, setSearch] = useState("");
@@ -166,7 +179,15 @@ useEffect(() => {
       element;
   }}
 >
-<button
+<WorkspaceSection
+  name={workspace.name}
+  isSelected={
+    selectedWorkspaceId === workspace.id
+  }
+  isExpanded={
+    expandedWorkspaceId === workspace.id ||
+    hasSearchResult
+  }
   onClick={() => {
     onSelectWorkspace(workspace.id);
 
@@ -176,34 +197,29 @@ useEffect(() => {
         : workspace.id
     );
   }}
-  className={`mb-2 flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition ${
-    selectedWorkspaceId === workspace.id
-      ? "bg-slate-800 text-indigo-400"
-      : "text-slate-400 hover:bg-slate-800"
-  }`}
->
-  {(
-  expandedWorkspaceId === workspace.id ||
-  hasSearchResult
-) ? (
-    <ChevronDown size={16} />
-  ) : (
-    <ChevronRight size={16} />
-  )}
+  onRename={() => {
+    const name = prompt(
+      "Rename workspace",
+      workspace.name
+    );
 
-  <span className="text-lg">
-    {(
-  expandedWorkspaceId === workspace.id ||
-  hasSearchResult
-)
-  ? "📂"
-  : "📁"}
-  </span>
+    if (!name) return;
 
-  <span className="truncate">
-    {workspace.name}
-  </span>
-</button>
+    onRenameWorkspace(
+      workspace.id,
+      name
+    );
+  }}
+  onDelete={() => {
+    if (
+      confirm(
+        `Delete "${workspace.name}" workspace?`
+      )
+    ) {
+      onDeleteWorkspace(workspace.id);
+    }
+  }}
+/>
 {(
   expandedWorkspaceId === workspace.id ||
   hasSearchResult

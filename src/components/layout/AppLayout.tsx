@@ -193,7 +193,8 @@ function handleNewWorkspace() {
   setActiveConversationId(newConversation.id);
 }
 
-function handleNewChat() {
+function handleNewChat() 
+{
   const workspace =
     workspaces.find(
       (w) => w.id === selectedWorkspaceId
@@ -214,7 +215,82 @@ function handleNewChat() {
 
   setActiveConversationId(newConversation.id);
 }
-  function handleDeleteConversation(id: string) {
+
+function handleRenameWorkspace(
+  workspaceId: string,
+  newName: string
+) {
+  const name = newName.trim();
+
+  if (!name) return;
+
+  setWorkspaces((prev) =>
+    prev.map((workspace) =>
+      workspace.id === workspaceId
+        ? {
+            ...workspace,
+            name,
+          }
+        : workspace
+    )
+  );
+
+  setConversations((prev) =>
+    prev.map((conversation) =>
+      conversation.workspaceId === workspaceId
+        ? {
+            ...conversation,
+            workspace: name,
+          }
+        : conversation
+    )
+  );
+}
+
+function handleDeleteWorkspace(
+  workspaceId: string
+) {
+  if (workspaces.length === 1) {
+    alert("At least one workspace must exist.");
+    return;
+  }
+
+  const remainingWorkspaces = workspaces.filter(
+    (workspace) => workspace.id !== workspaceId
+  );
+
+  const remainingConversations =
+    conversations.filter(
+      (conversation) =>
+        conversation.workspaceId !== workspaceId
+    );
+
+  setWorkspaces(remainingWorkspaces);
+
+  setConversations(remainingConversations);
+
+  const fallbackWorkspace =
+    remainingWorkspaces[0];
+
+  setSelectedWorkspaceId(
+    fallbackWorkspace.id
+  );
+
+  setActiveWorkspaceId(
+    fallbackWorkspace.id
+  );
+
+  if (
+    remainingConversations.length > 0
+  ) {
+    setActiveConversationId(
+      remainingConversations[0].id
+    );
+  }
+}
+
+  function handleDeleteConversation(id: string) 
+  {
     if (conversations.length === 1) {
       const newConversation: Conversation = {
         id: crypto.randomUUID(),
@@ -278,6 +354,8 @@ function handleNewChat() {
         activeConversationId={activeConversationId}
         onNewChat={handleNewChat}
         onNewWorkspace={handleNewWorkspace}
+        onRenameWorkspace={handleRenameWorkspace}
+        onDeleteWorkspace={handleDeleteWorkspace}
         onDeleteConversation={handleDeleteConversation}
         onRenameConversation={handleRenameConversation}
         onSelectConversation={(id) => {
