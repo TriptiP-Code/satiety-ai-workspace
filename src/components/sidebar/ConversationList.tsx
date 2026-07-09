@@ -3,7 +3,14 @@ import ConversationItem from "./ConversationItem";
 
 interface ConversationListProps {
   conversations: Conversation[];
+
   activeConversationId: string;
+
+  workspaceId: string;
+  selectedWorkspaceId: string;
+
+  onSelectWorkspace: (workspaceId: string) => void;
+
   onSelectConversation: (id: string) => void;
   onDeleteConversation: (id: string) => void;
   onRenameConversation: (
@@ -19,30 +26,24 @@ function ConversationList({
   onDeleteConversation,
   onRenameConversation,
 }: ConversationListProps) {
-  if (conversations.length === 0) {
-    return (
-      <div className="mt-10 text-center">
-        <p className="text-sm text-slate-500">
-          No conversations found.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-2">
-      {conversations.map((conversation) => (
-        <ConversationItem
-          key={conversation.id}
-          conversation={conversation}
-          isActive={
-            activeConversationId === conversation.id
-          }
-          onSelect={onSelectConversation}
-          onDelete={onDeleteConversation}
-          onRename={onRenameConversation}
-        />
-      ))}
+    <div>
+
+      <div className="mt-2 space-y-1">
+        {conversations.map((conversation) => (
+          <ConversationItem
+            key={conversation.id}
+            conversation={conversation}
+            isActive={
+              activeConversationId ===
+              conversation.id
+            }
+            onSelect={onSelectConversation}
+            onDelete={onDeleteConversation}
+            onRename={onRenameConversation}
+          />
+        ))}
+      </div>
     </div>
   );
 }

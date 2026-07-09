@@ -5,22 +5,69 @@ import type { Conversation } from "../../types/conversation";
 
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import type { Workspace } from "../../types/workspace";
 
-const STORAGE_KEY = "satiety-conversations";
+const CONVERSATION_STORAGE_KEY = "satiety-conversations";
+
+const WORKSPACE_STORAGE_KEY = "satiety-workspaces";
+
 const ACTIVE_CHAT_KEY = "satiety-active-chat";
 
-function AppLayout() {
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+const ACTIVE_WORKSPACE_KEY =
+  "satiety-active-workspace";
+  
 
-    if (saved) {
-      return JSON.parse(saved);
-      return parsed.map((conversation: any) => ({
-      ...conversation,
-      workspace: conversation.workspace ?? "General",
-    }));
+function AppLayout() {
+
+  const WORKSPACE_KEY = "satiety-workspaces";
+  const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
+
+  const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
+  const saved = localStorage.getItem(
+    WORKSPACE_STORAGE_KEY
+  );
+
+  if (saved) {
+    return JSON.parse(saved);
+  }
+
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: "General",
+    },
+  ];
+});
+
+
+
+  const [conversations, setConversations] = useState<Conversation[]>(() => {
+    const saved = localStorage.getItem(CONVERSATION_STORAGE_KEY);
+
+if (saved) {
+  const parsed = JSON.parse(saved);
+
+  return parsed.map((conversation: any) => {
+    // Already migrated
+    if (conversation.workspaceId) {
+      return conversation;
     }
 
+    // Old data
+    const workspaceName =
+      conversation.workspace ?? "General";
+
+    const workspace = workspaces.find(
+      (w) => w.name === workspaceName
+    );
+
+    return {
+      ...conversation,
+      workspaceId:
+        workspace?.id ?? workspaces[0].id,
+    };
+  });
+}
     return [
       {
         id: crypto.randomUUID(),
@@ -38,7 +85,7 @@ function AppLayout() {
       return saved;
     }
 
-    const savedConversations = localStorage.getItem(STORAGE_KEY);
+    const savedConversations = localStorage.getItem(CONVERSATION_STORAGE_KEY);
 
     if (savedConversations) {
       const parsed: Conversation[] = JSON.parse(savedConversations);
@@ -48,13 +95,50 @@ function AppLayout() {
     return crypto.randomUUID();
   });
 
-  const [activeWorkspace, setActiveWorkspace] = useState("General");
+const [selectedWorkspaceId, setSelectedWorkspaceId] =
+  useState(() => {
+    return workspaces[0].id;
+  });
+
+  const [activeWorkspaceId, setActiveWorkspaceId] =
+  useState(() => {
+    const saved = localStorage.getItem(
+      ACTIVE_WORKSPACE_KEY
+    );
+
+    if (saved) return saved;
+
+    return workspaces[0].id;
+  });
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+  localStorage.setItem(
+    WORKSPACE_KEY,
+    JSON.stringify(workspaces)
+  );
+}, [workspaces]);
+
+
+
+  useEffect(() => {
+  localStorage.setItem(
+    ACTIVE_WORKSPACE_KEY,
+    activeWorkspaceId
+  );
+}, [activeWorkspaceId]);
+
+  useEffect(() => {
+  localStorage.setItem(
+    WORKSPACE_STORAGE_KEY,
+    JSON.stringify(workspaces)
+  );
+}, [workspaces]);
+
+  useEffect(() => {
     localStorage.setItem(
-      STORAGE_KEY,
+      CONVERSATION_STORAGE_KEY,
       JSON.stringify(conversations)
     );
   }, [conversations]);
@@ -72,23 +156,38 @@ function AppLayout() {
         conversation.id === activeConversationId
     ) ?? conversations[0];
 
+  const activeWorkspace =
+  workspaces.find(
+    (workspace) =>
+      workspace.id === activeWorkspaceId
+  ) ?? workspaces[0];
+
 function handleNewWorkspace() {
   const name = prompt("Workspace name");
 
   if (!name?.trim()) return;
 
-  const workspace = name.trim();
+  const workspace: Workspace = {
+    id: crypto.randomUUID(),
+    name: name.trim(),
+  };
+
+  setWorkspaces((prev) => [...prev, workspace]);
 
   const newConversation: Conversation = {
     id: crypto.randomUUID(),
     title: "New Chat",
-    workspace,
+    workspace: workspace.name,
+    workspaceId: workspace.id,
     messages: [],
   };
 
-  setConversations((prev) => [...prev, newConversation]);
+  setConversations((prev) => [
+    ...prev,
+    newConversation,
+  ]);
 
-  setActiveWorkspace(workspace);
+  setActiveWorkspaceId(workspace.id);
 
   setActiveConversationId(newConversation.id);
 }
@@ -97,7 +196,8 @@ function handleNewChat() {
   const newConversation: Conversation = {
     id: crypto.randomUUID(),
     title: "New Chat",
-    workspace: activeWorkspace,
+    workspace: activeWorkspace.name,
+    workspaceId: activeWorkspace.id,
     messages: [],
   };
 
@@ -163,7 +263,9 @@ function handleNewChat() {
     <div className="flex h-screen bg-slate-950 text-slate-100">
       <Sidebar
         conversations={conversations}
-        activeWorkspace={activeWorkspace}
+        workspaces={workspaces}
+        activeWorkspace={activeWorkspace.name}
+        selectedWorkspaceId={selectedWorkspaceId}onSelectWorkspace={setSelectedWorkspaceId}
         activeConversationId={activeConversationId}
         onNewChat={handleNewChat}
         onNewWorkspace={handleNewWorkspace}
@@ -176,9 +278,11 @@ function handleNewChat() {
     (c) => c.id === id
   );
 
-  if (conversation) {
-    setActiveWorkspace(conversation.workspace);
-  }
+if (conversation) {
+  setActiveWorkspaceId(
+    conversation.workspaceId
+  );
+}
 }}
       />
 
