@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, FolderPlus } from "lucide-react";
 
 import Button from "../ui/Button";
@@ -54,6 +54,10 @@ function Sidebar({
 const [expandedWorkspaceId, setExpandedWorkspaceId] =
   useState<string | null>(null);
 
+const workspaceRefs = useRef<
+  Record<string, HTMLDivElement | null>
+>({});
+
   const filteredConversations = conversations.filter((conversation) =>
     conversation.title
       .toLowerCase()
@@ -75,6 +79,25 @@ const groupedWorkspaces = workspaces.map((workspace) => {
       workspaceConversations.length > 0,
   };
 });
+
+useEffect(() => {
+  if (!search.trim()) return;
+
+  const firstMatch = groupedWorkspaces.find(
+    (group) => group.hasSearchResult
+  );
+
+  if (!firstMatch) return;
+
+  requestAnimationFrame(() => {
+    workspaceRefs.current[
+      firstMatch.workspace.id
+    ]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  });
+}, [search, groupedWorkspaces]);
 
   return (
     <aside className="flex w-80 shrink-0 flex-col border-r border-slate-800 bg-slate-900">
@@ -136,7 +159,13 @@ const groupedWorkspaces = workspaces.map((workspace) => {
     conversations,
     hasSearchResult,
   }) => (
-              <div key={workspace.id}>
+              <div
+  key={workspace.id}
+  ref={(element) => {
+    workspaceRefs.current[workspace.id] =
+      element;
+  }}
+>
 <button
   onClick={() => {
     onSelectWorkspace(workspace.id);
