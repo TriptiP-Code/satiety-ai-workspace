@@ -9,6 +9,8 @@ import type { Workspace } from "../../types/workspace";
 import ConversationList from "../sidebar/ConversationList";
 import WorkspaceSection from "../sidebar/WorkspaceSection";
 
+import { useNavigate } from "react-router-dom";
+
 interface SidebarProps {
   workspaces: Workspace[];
   conversations: Conversation[];
@@ -65,6 +67,7 @@ onRenameConversation,
   onSelectConversation,
 }: SidebarProps) {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
 const [expandedWorkspaceId, setExpandedWorkspaceId] =
   useState<string | null>(null);
@@ -280,19 +283,24 @@ useEffect(() => {
       </div>
 
       {/* Footer */}
-      <div className={`flex h-[88px] items-center border-t px-4 ${
-  theme === "dark"
-    ? "border-slate-800"
-    : "border-slate-300"
-}`}>
-        <button className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
-  theme === "dark"
-    ? "hover:bg-slate-800"
-    : "hover:bg-slate-200"
-}`}>
-          ⚙ Settings
-        </button>
-      </div>
+      <div
+  className={`flex h-[88px] items-center border-t px-4 ${
+    theme === "dark"
+      ? "border-slate-800"
+      : "border-slate-300"
+  }`}
+>
+  <button
+    onClick={() => navigate("/settings")}
+    className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
+      theme === "dark"
+        ? "hover:bg-slate-800"
+        : "hover:bg-slate-200"
+    }`}
+  >
+    ⚙ Settings
+  </button>
+</div>
     </aside>
   );
 }

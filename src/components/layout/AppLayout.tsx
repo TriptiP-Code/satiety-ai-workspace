@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import type { Conversation } from "../../types/conversation";
@@ -24,6 +24,8 @@ function AppLayout()
  {
 
   const { theme, toggleTheme } = useTheme();
+
+  const navigate = useNavigate();
 
   const WORKSPACE_KEY = "satiety-workspaces";
   const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
@@ -213,8 +215,7 @@ function handleNewWorkspace() {
   setActiveConversationId(newConversation.id);
 }
 
-function handleNewChat() 
-{
+function handleNewChat() {
   const workspace =
     workspaces.find(
       (w) => w.id === selectedWorkspaceId
@@ -234,6 +235,9 @@ function handleNewChat()
   ]);
 
   setActiveConversationId(newConversation.id);
+
+  // If we're on Settings, go back to chat
+  navigate("/");
 }
 
 function handleRenameWorkspace(
@@ -389,6 +393,7 @@ function handleDeleteWorkspace(
         onRenameConversation={handleRenameConversation}
         onSelectConversation={(id) => {
   setActiveConversationId(id);
+  navigate("/");
 }}
       />
 
