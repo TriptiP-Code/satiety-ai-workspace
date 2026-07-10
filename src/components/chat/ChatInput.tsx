@@ -1,5 +1,10 @@
-import { useState } from "react";
-import { Paperclip, Send } from "lucide-react";
+import { useRef, useState } from "react";
+import {
+  Paperclip,
+  Send,
+  X,
+  Folder,
+} from "lucide-react";
 
 import Input from "../ui/Input";
 import Button from "../ui/Button";
@@ -16,17 +21,41 @@ function ChatInput({
   isLoading,
 }: ChatInputProps) {
   const [input, setInput] = useState("");
+  const [selectedFile, setSelectedFile] =
+    useState<File | null>(null);
+
+  const fileInputRef =
+    useRef<HTMLInputElement>(null);
 
   const { theme } = useTheme();
 
   function handleSend() {
     if (isLoading) return;
 
-    if (!input.trim()) return;
+    if (
+      !input.trim() &&
+      !selectedFile
+    )
+      return;
 
     onSendMessage(input);
 
     setInput("");
+    setSelectedFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  function handleFileChange(
+    event: React.ChangeEvent<HTMLInputElement>
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    setSelectedFile(file);
   }
 
   return (
@@ -37,11 +66,65 @@ function ChatInput({
           : "border-slate-300 bg-white"
       }`}
     >
+      {/* Attachment Preview */}
+
+      {selectedFile && (
+        <div className="mx-auto mb-4 flex max-w-4xl">
+          <div
+            className={`flex items-center gap-3 rounded-lg border px-4 py-2 ${
+              theme === "dark"
+                ? "border-slate-700 bg-slate-800"
+                : "border-slate-300 bg-slate-100"
+            }`}
+          >
+            <Folder
+  size={16}
+  className={
+    theme === "dark"
+      ? "text-indigo-400"
+      : "text-indigo-600"
+  }
+/>
+
+            <span className="max-w-xs truncate text-sm">
+              {selectedFile.name}
+            </span>
+
+            <button
+              onClick={() => {
+                setSelectedFile(null);
+
+                if (fileInputRef.current) {
+                  fileInputRef.current.value =
+                    "";
+                }
+              }}
+              className="rounded p-1 transition hover:bg-red-500 hover:text-white"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="mx-auto flex max-w-4xl items-center gap-3">
+
+        {/* Hidden File Input */}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+
         <Button
           variant="secondary"
           className="px-3"
           disabled={isLoading}
+          onClick={() =>
+            fileInputRef.current?.click()
+          }
         >
           <Paperclip size={18} />
         </Button>
