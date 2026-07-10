@@ -1,4 +1,7 @@
+import { useEffect, useRef, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+
+import ProfileDropdown from "../profile/ProfileDropdown";
 
 interface HeaderProps {
   theme: "dark" | "light";
@@ -9,6 +12,38 @@ function Header({
   theme,
   toggleTheme,
 }: HeaderProps) {
+  const [showProfile, setShowProfile] =
+    useState(false);
+
+  const profileRef =
+    useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleOutsideClick(
+      event: MouseEvent
+    ) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(
+          event.target as Node
+        )
+      ) {
+        setShowProfile(false);
+      }
+    }
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+    return () =>
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+  }, []);
+
   return (
     <header
       className={`flex h-16 items-center justify-between border-b px-6 transition-colors duration-300 ${
@@ -62,14 +97,28 @@ function Header({
         </button>
 
         <div
-  className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-colors duration-300 ${
-    theme === "dark"
-      ? "bg-indigo-600 text-white"
-      : "bg-indigo-100 text-indigo-700 border border-indigo-200"
-  }`}
->
-  T
-</div>
+          ref={profileRef}
+          className="relative"
+        >
+          <button
+            onClick={() =>
+              setShowProfile(
+                (prev) => !prev
+              )
+            }
+            className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-all duration-300 hover:scale-105 ${
+              theme === "dark"
+                ? "bg-indigo-600 text-white"
+                : "border border-indigo-200 bg-indigo-100 text-indigo-700"
+            }`}
+          >
+            T
+          </button>
+
+          <ProfileDropdown
+            open={showProfile}
+          />
+        </div>
       </div>
     </header>
   );
