@@ -1,7 +1,13 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { cn } from "../../../utils/cn";
+import type {
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+import { cn } from "../../../utils/cn";
+import { useTheme } from "../../../context/ThemeContext";
+
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   variant?: "primary" | "secondary" | "danger";
 }
@@ -12,15 +18,23 @@ function Button({
   className = "",
   ...props
 }: ButtonProps) {
+
+  // 👇 Put it here
+  const { theme } = useTheme();
+
   const baseStyles =
-    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50";
 
   const variants = {
     primary:
-      "bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500",
+  theme === "dark"
+    ? "bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500"
+    : "bg-indigo-100 text-indigo-700 border border-indigo-300 hover:bg-indigo-200 focus:ring-indigo-400",
 
     secondary:
-      "bg-slate-800 text-slate-100 hover:bg-slate-700 focus:ring-slate-500",
+      theme === "dark"
+        ? "bg-slate-800 text-slate-100 hover:bg-slate-700 focus:ring-slate-500"
+        : "bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 focus:ring-slate-400",
 
     danger:
       "bg-red-600 text-white hover:bg-red-500 focus:ring-red-500",
@@ -28,7 +42,11 @@ function Button({
 
   return (
     <button
-      className={cn(baseStyles,variants[variant],className)}
+      className={cn(
+        baseStyles,
+        variants[variant],
+        className
+      )}
       {...props}
     >
       {children}

@@ -9,10 +9,20 @@ interface ConversationListProps {
   workspaceId: string;
   selectedWorkspaceId: string;
 
-  onSelectWorkspace: (workspaceId: string) => void;
+  theme: "dark" | "light";
 
-  onSelectConversation: (id: string) => void;
-  onDeleteConversation: (id: string) => void;
+  onSelectWorkspace: (
+    workspaceId: string
+  ) => void;
+
+  onSelectConversation: (
+    id: string
+  ) => void;
+
+  onDeleteConversation: (
+    id: string
+  ) => void;
+
   onRenameConversation: (
     id: string,
     title: string
@@ -22,27 +32,38 @@ interface ConversationListProps {
 function ConversationList({
   conversations,
   activeConversationId,
+  theme,
   onSelectConversation,
   onDeleteConversation,
   onRenameConversation,
 }: ConversationListProps) {
   return (
     <div>
-
       <div className="mt-2 space-y-1">
-        {conversations.map((conversation) => (
-          <ConversationItem
-            key={conversation.id}
-            conversation={conversation}
-            isActive={
-              activeConversationId ===
-              conversation.id
-            }
-            onSelect={onSelectConversation}
-            onDelete={onDeleteConversation}
-            onRename={onRenameConversation}
-          />
-        ))}
+        {conversations.map(
+          (conversation) => (
+            <ConversationItem
+              key={conversation.id}
+              conversation={
+                conversation
+              }
+              theme={theme}
+              isActive={
+                activeConversationId ===
+                conversation.id
+              }
+              onSelect={
+                onSelectConversation
+              }
+              onDelete={
+                onDeleteConversation
+              }
+              onRename={
+                onRenameConversation
+              }
+            />
+          )
+        )}
       </div>
     </div>
   );

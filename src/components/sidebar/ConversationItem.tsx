@@ -6,6 +6,7 @@ import type { Conversation } from "../../types/conversation";
 interface ConversationItemProps {
   conversation: Conversation;
   isActive: boolean;
+  theme: "dark" | "light";
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
   onRename: (
@@ -17,14 +18,20 @@ interface ConversationItemProps {
 function ConversationItem({
   conversation,
   isActive,
+  theme,
   onSelect,
   onDelete,
   onRename,
 }: ConversationItemProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(conversation.title);
+  const [isEditing, setIsEditing] =
+    useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState(
+    conversation.title
+  );
+
+  const inputRef =
+    useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setTitle(conversation.title);
@@ -49,28 +56,36 @@ function ConversationItem({
 
   return (
     <div
-      className={`group flex items-center rounded-lg transition ${
-        isActive
-          ? "bg-indigo-600"
-          : "hover:bg-slate-800"
-      }`}
-    >
+  className={`group flex items-center rounded-lg transition ${
+    isActive
+      ? theme === "dark"
+        ? "bg-indigo-600"
+        : "bg-indigo-100"
+      : theme === "dark"
+      ? "hover:bg-slate-800"
+      : "hover:bg-slate-200"
+  }`}
+>
       {isEditing ? (
         <input
           ref={inputRef}
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) =>
+            setTitle(e.target.value)
+          }
           onBlur={saveTitle}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter")
               saveTitle();
-            }
 
-            if (e.key === "Escape") {
+            if (e.key === "Escape")
               cancelEditing();
-            }
           }}
-          className="flex-1 rounded-lg bg-slate-700 px-3 py-2 text-sm text-white outline-none"
+          className={`flex-1 rounded-lg px-3 py-2 text-sm outline-none ${
+            theme === "dark"
+              ? "bg-slate-700 text-white"
+              : "bg-white border border-slate-300 text-slate-900"
+          }`}
         />
       ) : (
         <>
@@ -82,10 +97,14 @@ function ConversationItem({
               setIsEditing(true)
             }
             className={`flex-1 truncate px-3 py-2 text-left text-sm ${
-              isActive
-                ? "text-white"
-                : "text-slate-300"
-            }`}
+  isActive
+    ? theme === "dark"
+      ? "text-white"
+      : "text-indigo-700"
+    : theme === "dark"
+    ? "text-slate-300"
+    : "text-slate-700"
+}`}
           >
             {conversation.title}
           </button>
@@ -95,7 +114,11 @@ function ConversationItem({
               onClick={() =>
                 setIsEditing(true)
               }
-              className="rounded p-1 text-slate-400 transition hover:bg-slate-700 hover:text-white"
+              className={`rounded p-1 transition ${
+                theme === "dark"
+                  ? "text-slate-400 hover:bg-slate-700 hover:text-white"
+                  : "text-slate-500 hover:bg-slate-200 hover:text-slate-900"
+              }`}
             >
               <Pencil size={15} />
             </button>
@@ -104,7 +127,7 @@ function ConversationItem({
               onClick={() =>
                 onDelete(conversation.id)
               }
-              className="rounded p-1 text-slate-400 transition hover:bg-red-600 hover:text-white"
+              className="rounded p-1 text-red-500 transition hover:bg-red-600 hover:text-white"
             >
               <Trash2 size={15} />
             </button>

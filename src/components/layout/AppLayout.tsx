@@ -6,6 +6,7 @@ import type { Conversation } from "../../types/conversation";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import type { Workspace } from "../../types/workspace";
+import { useTheme } from "../../context/ThemeContext";
 
 const CONVERSATION_STORAGE_KEY = "satiety-conversations";
 
@@ -15,9 +16,14 @@ const ACTIVE_CHAT_KEY = "satiety-active-chat";
 
 const ACTIVE_WORKSPACE_KEY =
   "satiety-active-workspace";
+
+const THEME_KEY = "satiety-theme";
   
 
-function AppLayout() {
+function AppLayout()
+ {
+
+  const { theme, toggleTheme } = useTheme();
 
   const WORKSPACE_KEY = "satiety-workspaces";
   const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
@@ -113,6 +119,7 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
 
   const [isLoading, setIsLoading] = useState(false);
 
+
   useEffect(() => {
   localStorage.setItem(
     WORKSPACE_KEY,
@@ -149,6 +156,19 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
       activeConversationId
     );
   }, [activeConversationId]);
+
+  useEffect(() => {
+  localStorage.setItem(THEME_KEY, theme);
+}, [theme]);
+
+useEffect(() => {
+  document.documentElement.classList.remove(
+    "light",
+    "dark"
+  );
+
+  document.documentElement.classList.add(theme);
+}, [theme]);
 
   const activeConversation =
     conversations.find(
@@ -343,10 +363,19 @@ function handleDeleteWorkspace(
     );
   }
 
+
+
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100">
+    <div
+  className={`flex h-screen transition-colors duration-300 ${
+    theme === "dark"
+      ? "bg-slate-950 text-slate-100"
+      : "bg-slate-100 text-slate-900"
+  }`}
+>
       <Sidebar
         conversations={conversations}
+        theme={theme}
         workspaces={workspaces}
         activeWorkspace={activeWorkspace.name}
         selectedWorkspaceId={selectedWorkspaceId}
@@ -364,7 +393,10 @@ function handleDeleteWorkspace(
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Header />
+        <Header
+  theme={theme}
+  toggleTheme={toggleTheme}
+/>
 
         <main className="flex flex-1 min-w-0 overflow-hidden">
           <Outlet
