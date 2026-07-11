@@ -1,6 +1,7 @@
 import type { Message } from "../types/chat";
 
-const API_URL = "http://localhost:5000/api/chat";
+const API_URL =
+  "https://satiety-ai-workspace-backend.onrender.com/api/chat";
 
 export async function sendMessage(messages: Message[]) {
   const response = await fetch(API_URL, {
