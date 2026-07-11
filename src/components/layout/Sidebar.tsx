@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronRight, FolderPlus } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 
 import Button from "../ui/Button";
 
@@ -19,7 +19,6 @@ interface SidebarProps {
 
   selectedWorkspaceId: string;
   theme: "dark" | "light";
-  activeWorkspace: string;
 
   onNewChat: () => void;
   onNewWorkspace: () => void;
@@ -47,23 +46,16 @@ onDeleteConversation: (id: string) => void;
 function Sidebar({
   workspaces,
   conversations,
-
   activeConversationId,
-
   selectedWorkspaceId,
   theme,
-  activeWorkspace,
-
   onNewChat,
   onNewWorkspace,
-
-onSelectWorkspace,
-
-onRenameWorkspace,
-onDeleteWorkspace,
-
-onDeleteConversation,
-onRenameConversation,
+  onSelectWorkspace,
+  onRenameWorkspace,
+  onDeleteWorkspace,
+  onDeleteConversation,
+  onRenameConversation,
   onSelectConversation,
 }: SidebarProps) {
   const [search, setSearch] = useState("");

@@ -367,7 +367,6 @@ function handleDeleteWorkspace(
         conversations={conversations}
         theme={theme}
         workspaces={workspaces}
-        activeWorkspace={activeWorkspace.name}
         selectedWorkspaceId={selectedWorkspaceId}
         onSelectWorkspace={setSelectedWorkspaceId}
         activeConversationId={activeConversationId}
