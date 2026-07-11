@@ -1,10 +1,8 @@
 import type { Message } from "../types/chat";
 
-// const API_URL =
-//   "https://satiety-ai-workspace-backend.onrender.com/api/chat";
-
 const API_URL =
-"https://abcxyz123456.onrender.com/api/chat";
+  "https://satiety-ai-workspace-backend.onrender.com/api/chat";
+
 export async function sendMessage(messages: Message[]) {
 let response: Response;
 
