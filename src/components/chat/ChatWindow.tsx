@@ -74,26 +74,34 @@ function ChatWindow({
             : conversation
         )
       );
-    } catch (error) {
-      const errorMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "⚠ Unable to contact Satiety AI.",
-      };
+} catch (error) {
+  console.error(error);
 
-      setConversations((prev) =>
-        prev.map((conversation) =>
-          conversation.id === activeConversation.id
-            ? {
-                ...conversation,
-                messages: [...conversation.messages, errorMessage],
-              }
-            : conversation
-        )
-      );
+  const message =
+    error instanceof Error
+      ? error.message
+      : "Something went wrong while contacting Satiety.";
 
-      console.error(error);
-    } finally {
+  const errorMessage: Message = {
+    id: crypto.randomUUID(),
+    role: "assistant",
+    content: `⚠️ ${message}`,
+  };
+
+  setConversations((prev) =>
+    prev.map((conversation) =>
+      conversation.id === activeConversation.id
+        ? {
+            ...conversation,
+            messages: [
+              ...conversation.messages,
+              errorMessage,
+            ],
+          }
+        : conversation
+    )
+  );
+}finally {
       setIsLoading(false);
     }
   }

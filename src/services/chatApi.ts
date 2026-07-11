@@ -4,7 +4,10 @@ const API_URL =
   "https://satiety-ai-workspace-backend.onrender.com/api/chat";
 
 export async function sendMessage(messages: Message[]) {
-  const response = await fetch(API_URL, {
+let response: Response;
+
+try {
+  response = await fetch(API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,10 +16,20 @@ export async function sendMessage(messages: Message[]) {
       messages,
     }),
   });
+} catch {
+  throw new Error(
+    "Unable to reach Satiety servers. Please check your internet connection or try again later."
+  );
+}
+
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error("Failed to contact AI");
+    throw new Error(
+      data.error ||
+        "Something went wrong while contacting Satiety."
+    );
   }
 
-  return response.json();
+  return data;
 }
