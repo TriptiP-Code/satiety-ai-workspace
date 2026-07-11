@@ -20,15 +20,11 @@ const ACTIVE_WORKSPACE_KEY =
 const THEME_KEY = "satiety-theme";
   
 
-function AppLayout()
- {
+function AppLayout() {
 
   const { theme, toggleTheme } = useTheme();
 
   const navigate = useNavigate();
-
-  const WORKSPACE_KEY = "satiety-workspaces";
-  const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
 
   const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   const saved = localStorage.getItem(
@@ -120,16 +116,6 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
   });
 
   const [isLoading, setIsLoading] = useState(false);
-
-
-  useEffect(() => {
-  localStorage.setItem(
-    WORKSPACE_KEY,
-    JSON.stringify(workspaces)
-  );
-}, [workspaces]);
-
-
 
   useEffect(() => {
   localStorage.setItem(
