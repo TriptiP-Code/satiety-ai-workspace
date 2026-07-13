@@ -311,15 +311,25 @@ useEffect(() => {
   }`}
 >
   <button
-    onClick={() => navigate("/settings")}
-    className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
-      theme === "dark"
-        ? "hover:bg-slate-800"
-        : "hover:bg-slate-200"
-    }`}
-  >
-    ⚙ Settings
-  </button>
+  onClick={() => {
+    if (window.innerWidth < 1024) {
+      setSidebarOpen(false);
+
+      setTimeout(() => {
+        navigate("/settings");
+      }, 250); // matches your sidebar animation
+    } else {
+      navigate("/settings");
+    }
+  }}
+  className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
+    theme === "dark"
+      ? "hover:bg-slate-800"
+      : "hover:bg-slate-200"
+  }`}
+>
+  ⚙ Settings
+</button>
 </div>
     </aside>
   );
