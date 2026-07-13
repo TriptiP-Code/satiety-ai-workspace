@@ -304,10 +304,10 @@ useEffect(() => {
 
       {/* Footer */}
       <div
-  className={`border-t px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${
+  className={`sticky bottom-0 border-t px-4 pt-4 pb-8 md:pb-4 ${
     theme === "dark"
-      ? "border-slate-800"
-      : "border-slate-300"
+      ? "border-slate-800 bg-slate-900"
+      : "border-slate-300 bg-slate-100"
   }`}
 >
   <button
