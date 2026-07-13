@@ -66,19 +66,22 @@ function WorkspaceSection({
       ref={menuRef}
       className="group relative"
     >
-      <button
-        onClick={onClick}
+      <div
         className={`flex w-full items-center justify-between rounded-md px-3 py-2 transition-colors duration-300 ${
-  isSelected
-    ? theme === "dark"
-      ? "bg-slate-800 text-indigo-400"
-      : "bg-indigo-100 text-indigo-600"
-    : theme === "dark"
-      ? "text-slate-300 hover:bg-slate-800"
-      : "text-slate-700 hover:bg-slate-200"
-}`}
+          isSelected
+            ? theme === "dark"
+              ? "bg-slate-800 text-indigo-400"
+              : "bg-indigo-100 text-indigo-600"
+            : theme === "dark"
+            ? "text-slate-300 hover:bg-slate-800"
+            : "text-slate-700 hover:bg-slate-200"
+        }`}
       >
-        <div className="flex items-center gap-2 overflow-hidden">
+        {/* Workspace Button */}
+        <button
+          onClick={onClick}
+          className="flex flex-1 items-center gap-2 overflow-hidden text-left"
+        >
           <span className="text-lg">
             {isExpanded ? "📂" : "📁"}
           </span>
@@ -86,8 +89,9 @@ function WorkspaceSection({
           <span className="truncate text-sm font-medium">
             {name}
           </span>
-        </div>
+        </button>
 
+        {/* Menu Button */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -101,7 +105,7 @@ function WorkspaceSection({
         >
           <MoreHorizontal size={16} />
         </button>
-      </button>
+      </div>
 
       {showMenu && (
         <div

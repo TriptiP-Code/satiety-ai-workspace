@@ -26,7 +26,7 @@ function AppLayout() {
 
   const navigate = useNavigate();
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
 
   const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   const saved = localStorage.getItem(
@@ -118,6 +118,7 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
   localStorage.setItem(
@@ -394,7 +395,7 @@ function handleDeleteWorkspace(
   setSidebarOpen={setSidebarOpen}
 />
 
-        <main className="flex flex-1 min-w-0 overflow-hidden">
+        <main className="flex min-h-0 flex-1 overflow-hidden">
           <Outlet
             context={{
               activeConversation,

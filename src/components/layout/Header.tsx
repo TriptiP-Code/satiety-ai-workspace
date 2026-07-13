@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 
 import ProfileDropdown from "../profile/ProfileDropdown";
 
 interface HeaderProps {
   theme: "dark" | "light";
   toggleTheme: () => void;
+
+  setSidebarOpen: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
 }
 
 function Header({
   theme,
   toggleTheme,
+  setSidebarOpen,
 }: HeaderProps) {
   const [showProfile, setShowProfile] =
     useState(false);
@@ -52,27 +57,41 @@ function Header({
           : "border-slate-300 bg-white"
       }`}
     >
-      <div>
-        <h2
-          className={`text-lg font-semibold ${
-            theme === "dark"
-              ? "text-white"
-              : "text-slate-900"
-          }`}
-        >
-          Satiety
-        </h2>
+      <div className="flex items-center gap-3">
+  {/* Mobile Hamburger */}
+  <button
+    onClick={() => setSidebarOpen(true)}
+    className={`rounded-lg p-2 lg:hidden ${
+      theme === "dark"
+        ? "hover:bg-slate-800"
+        : "hover:bg-slate-200"
+    }`}
+  >
+    <Menu size={22} />
+  </button>
 
-        <p
-          className={`text-sm ${
-            theme === "dark"
-              ? "text-slate-400"
-              : "text-slate-600"
-          }`}
-        >
-          Your AI Workspace
-        </p>
-      </div>
+  <div>
+    <h2
+      className={`text-lg font-semibold ${
+        theme === "dark"
+          ? "text-white"
+          : "text-slate-900"
+      }`}
+    >
+      Satiety
+    </h2>
+
+    <p
+      className={`text-sm ${
+        theme === "dark"
+          ? "text-slate-400"
+          : "text-slate-600"
+      }`}
+    >
+      Your AI Workspace
+    </p>
+  </div>
+</div>
 
       <div className="flex items-center gap-3">
         <button
