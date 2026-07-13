@@ -137,12 +137,6 @@ useEffect(() => {
     }
   `}
 >
-  {sidebarOpen && (
-  <div
-    className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-    onClick={() => setSidebarOpen(false)}
-  />
-)}
       {/* Header */}
       <div className={`flex h-16 items-center border-b px-6 ${
   theme === "dark"
@@ -168,7 +162,13 @@ useEffect(() => {
       <div className="space-y-4 p-4">
         <Button
           className="w-full"
-          onClick={onNewChat}
+          onClick={() => {
+  onNewChat();
+
+  if (window.innerWidth < 1024) {
+    setSidebarOpen(false);
+  }
+}}
         >
           + New Chat
         </Button>

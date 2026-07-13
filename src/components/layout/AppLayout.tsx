@@ -366,6 +366,12 @@ function handleDeleteWorkspace(
       : "bg-slate-100 text-slate-900"
   }`}
 >
+  {sidebarOpen && (
+  <div
+    className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
       <Sidebar
         conversations={conversations}
         sidebarOpen={sidebarOpen}
@@ -382,8 +388,12 @@ function handleDeleteWorkspace(
         onDeleteConversation={handleDeleteConversation}
         onRenameConversation={handleRenameConversation}
         onSelectConversation={(id) => {
-  setActiveConversationId(id);
-  navigate("/");
+    setActiveConversationId(id);
+    navigate("/");
+
+    if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+    }
 }}
       />
 
