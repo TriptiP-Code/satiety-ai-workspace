@@ -18,7 +18,7 @@ function HomePage() {
   const context = useOutletContext<OutletContext>();
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-1 overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden">
   <ChatWindow
     activeConversation={context.activeConversation}
     conversations={context.conversations}

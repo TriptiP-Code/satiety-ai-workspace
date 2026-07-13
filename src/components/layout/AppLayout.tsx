@@ -395,7 +395,7 @@ function handleDeleteWorkspace(
   setSidebarOpen={setSidebarOpen}
 />
 
-        <main className="flex min-h-0 flex-1 overflow-hidden">
+        <main className="flex h-0 flex-1 overflow-hidden">
           <Outlet
             context={{
               activeConversation,

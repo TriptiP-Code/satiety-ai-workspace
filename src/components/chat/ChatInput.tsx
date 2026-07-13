@@ -60,12 +60,12 @@ function ChatInput({
 
   return (
     <div
-      className={`border-t px-4 py-4 pb-20 transition-colors duration-300 ${
-        theme === "dark"
-          ? "border-slate-800 bg-slate-950"
-          : "border-slate-300 bg-white"
-      }`}
-    >
+  className={`shrink-0 border-t px-4 md:px-8 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] transition-colors duration-300 ${
+    theme === "dark"
+      ? "border-slate-800 bg-slate-950"
+      : "border-slate-300 bg-white"
+  }`}
+>
       {/* Attachment Preview */}
 
       {selectedFile && (

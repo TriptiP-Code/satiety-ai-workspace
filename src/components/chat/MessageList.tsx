@@ -16,7 +16,15 @@ function MessageList({ messages, isLoading, }: MessageListProps) {
   });
 }, [messages, isLoading]);
   return (
-    <div className="flex min-h-full flex-col px-8 py-6">
+    <div
+  className="
+    h-full
+    overflow-y-auto
+    px-4
+    md:px-8
+    py-6
+  "
+>
 {messages.map((message) => (
   <ChatMessage
     key={message.id}
