@@ -360,7 +360,7 @@ function handleDeleteWorkspace(
 
   return (
     <div
-  className={`flex h-screen transition-colors duration-300 ${
+   className={`flex h-[100dvh] overflow-hidden transition-colors duration-300 ${
     theme === "dark"
       ? "bg-slate-950 text-slate-100"
       : "bg-slate-100 text-slate-900"

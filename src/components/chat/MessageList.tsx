@@ -8,34 +8,44 @@ interface MessageListProps {
   isLoading: boolean;
 }
 
-function MessageList({ messages, isLoading, }: MessageListProps) {
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+function MessageList({
+  messages,
+  isLoading,
+}: MessageListProps) {
+
+  const containerRef =
+    useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-  bottomRef.current?.scrollIntoView({
-    behavior: "smooth",
-  });
-}, [messages, isLoading]);
+    const container = containerRef.current;
+
+    if (!container) return;
+
+    container.scrollTop =
+      container.scrollHeight;
+  }, [messages, isLoading]);
+
   return (
     <div
-  className="
-    h-full
-    overflow-y-auto
-    px-4
-    md:px-8
-    py-6
-  "
->
-{messages.map((message) => (
-  <ChatMessage
-    key={message.id}
-    message={message}
-  />
-))}
-{isLoading && <TypingIndicator />}
-<div ref={bottomRef}></div>
+      ref={containerRef}
+      className="
+        h-full
+        overflow-y-auto
+        px-4
+        md:px-8
+        py-6
+      "
+    >
+      {messages.map((message) => (
+        <ChatMessage
+          key={message.id}
+          message={message}
+        />
+      ))}
+
+      {isLoading && <TypingIndicator />}
     </div>
   );
-  
 }
 
 export default MessageList;

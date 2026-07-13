@@ -51,7 +51,7 @@ function Header({
 
   return (
     <header
-      className={` shrink-0 flex h-16 items-center justify-between border-b px-6 transition-colors duration-300 ${
+  className={`sticky top-0 z-20 shrink-0 flex h-16 items-center justify-between border-b px-6 transition-colors duration-300 ${
         theme === "dark"
           ? "border-slate-800 bg-slate-950"
           : "border-slate-300 bg-white"
