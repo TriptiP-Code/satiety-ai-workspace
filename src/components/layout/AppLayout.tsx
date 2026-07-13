@@ -26,6 +26,8 @@ function AppLayout() {
 
   const navigate = useNavigate();
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   const saved = localStorage.getItem(
     WORKSPACE_STORAGE_KEY
@@ -365,6 +367,8 @@ function handleDeleteWorkspace(
 >
       <Sidebar
         conversations={conversations}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
         theme={theme}
         workspaces={workspaces}
         selectedWorkspaceId={selectedWorkspaceId}
@@ -386,6 +390,8 @@ function handleDeleteWorkspace(
         <Header
   theme={theme}
   toggleTheme={toggleTheme}
+  sidebarOpen={sidebarOpen}
+  setSidebarOpen={setSidebarOpen}
 />
 
         <main className="flex flex-1 min-w-0 overflow-hidden">

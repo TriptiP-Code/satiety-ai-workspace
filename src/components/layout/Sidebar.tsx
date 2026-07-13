@@ -41,6 +41,10 @@ onDeleteConversation: (id: string) => void;
   ) => void;
 
   onSelectConversation: (id: string) => void;
+  sidebarOpen: boolean;
+setSidebarOpen: React.Dispatch<
+  React.SetStateAction<boolean>
+>;
 }
 
 function Sidebar({
@@ -57,6 +61,8 @@ function Sidebar({
   onDeleteConversation,
   onRenameConversation,
   onSelectConversation,
+  sidebarOpen,
+  setSidebarOpen,
 }: SidebarProps) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -110,11 +116,33 @@ useEffect(() => {
 }, [search, groupedWorkspaces]);
 
   return (
-    <aside className={`flex w-80 shrink-0 flex-col border-r transition-colors duration-300 ${
-  theme === "dark"
-    ? "border-slate-800 bg-slate-900"
-    : "border-slate-300 bg-slate-100"
-}`}>
+    <aside
+  className={`
+    fixed left-0 top-0 z-40 h-screen
+    w-72 lg:w-80
+    transform transition-all duration-300
+    ${
+      sidebarOpen
+        ? "translate-x-0"
+        : "-translate-x-full"
+    }
+    lg:translate-x-0
+    lg:static
+    lg:flex
+    flex shrink-0 flex-col border-r
+    ${
+      theme === "dark"
+        ? "border-slate-800 bg-slate-900"
+        : "border-slate-300 bg-slate-100"
+    }
+  `}
+>
+  {sidebarOpen && (
+  <div
+    className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
       {/* Header */}
       <div className={`flex h-16 items-center border-b px-6 ${
   theme === "dark"
