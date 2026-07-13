@@ -97,11 +97,16 @@ function WorkspaceSection({
             e.stopPropagation();
             setShowMenu((prev) => !prev);
           }}
-          className={`rounded p-1 opacity-0 transition group-hover:opacity-100 ${
-            theme === "dark"
-              ? "hover:bg-slate-700"
-              : "hover:bg-slate-300"
-          }`}
+          className={`
+  rounded p-1 transition
+  opacity-100 lg:opacity-0
+  lg:group-hover:opacity-100
+  ${
+    theme === "dark"
+      ? "hover:bg-slate-700"
+      : "hover:bg-slate-300"
+  }
+`}
         >
           <MoreHorizontal size={16} />
         </button>
