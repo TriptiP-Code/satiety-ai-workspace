@@ -304,7 +304,7 @@ useEffect(() => {
 
       {/* Footer */}
       <div
-  className={`flex h-[88px] items-center border-t px-4 ${
+  className={`border-t px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] ${
     theme === "dark"
       ? "border-slate-800"
       : "border-slate-300"
