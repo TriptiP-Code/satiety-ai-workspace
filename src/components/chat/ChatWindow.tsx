@@ -112,6 +112,7 @@ function ChatWindow({
 
 return (
   <div className="flex h-full min-h-0 w-full flex-col overflow-hidden">
+    {/* Scrollable Area */}
     <div className="flex-1 min-h-0 overflow-hidden">
       {activeConversation.messages.length === 0 ? (
         <WelcomeSection />
@@ -123,10 +124,13 @@ return (
       )}
     </div>
 
-    <ChatInput
-      onSendMessage={handleSendMessage}
-      isLoading={isLoading}
-    />
+    {/* Fixed Footer */}
+    <div className="shrink-0">
+      <ChatInput
+        onSendMessage={handleSendMessage}
+        isLoading={isLoading}
+      />
+    </div>
   </div>
 );
 }
