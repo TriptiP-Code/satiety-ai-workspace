@@ -109,7 +109,17 @@ function ConversationItem({
             {conversation.title}
           </button>
 
-          <div className="mr-2 hidden items-center gap-1 group-hover:flex">
+          <div
+  className="
+    mr-2
+    flex
+    items-center
+    gap-1
+    lg:opacity-0
+    lg:group-hover:opacity-100
+    transition-opacity
+  "
+>
             <button
               onClick={() =>
                 setIsEditing(true)
