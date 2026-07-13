@@ -111,8 +111,8 @@ function ChatWindow({
   }
 
 return (
-  <div className="flex h-full min-h-0 w-full flex-col">
-    <div className="min-h-0 flex-1 overflow-hidden">
+  <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden">
+    <div className="flex-1 overflow-y-auto">
       {activeConversation.messages.length === 0 ? (
         <WelcomeSection />
       ) : (
