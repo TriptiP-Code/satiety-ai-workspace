@@ -16,13 +16,13 @@ function WelcomePage() {
 
   return (
     <div
-      className={`relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-6 transition-colors duration-500 ${
+      className={`relative flex min-h-screen items-center justify-center overflow-x-hidden px-4 py-4 md:px-6 md:py-10 transition-colors duration-500 ${
         theme === "dark"
           ? "bg-slate-950"
           : "bg-slate-100"
       }`}
     >
-      {/* Background */}
+      {/* Background Blobs */}
 
       <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl animate-blob" />
 
@@ -31,7 +31,7 @@ function WelcomePage() {
       <div className="absolute left-1/2 top-1/2 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl animate-blob animation-delay-4000" />
 
       <div
-        className={`relative z-10 w-full max-w-xl rounded-3xl border p-10 shadow-2xl backdrop-blur-xl transition-all ${
+        className={`relative z-10 w-full max-w-xl rounded-3xl border p-5 sm:p-6 md:p-10 text-center shadow-2xl backdrop-blur-xl transition-all duration-500 ${
           theme === "dark"
             ? "border-white/10 bg-white/5"
             : "border-white/60 bg-white/70"
@@ -39,16 +39,16 @@ function WelcomePage() {
       >
         {/* Logo */}
 
-        <div className="flex justify-center">
+        <div className="mb-5 flex justify-center md:mb-8">
           <div
-            className={`rounded-3xl p-5 ${
+            className={`rounded-3xl p-3 md:p-5 ${
               theme === "dark"
                 ? "bg-indigo-500/20"
                 : "bg-indigo-100"
             }`}
           >
             <Sparkles
-              size={42}
+              size={34}
               className="text-indigo-500"
             />
           </div>
@@ -57,7 +57,7 @@ function WelcomePage() {
         {/* Heading */}
 
         <h1
-          className={`mt-6 text-center text-5xl font-bold ${
+          className={`text-3xl font-bold md:text-5xl ${
             theme === "dark"
               ? "text-white"
               : "text-slate-900"
@@ -67,7 +67,7 @@ function WelcomePage() {
         </h1>
 
         <p
-          className={`mt-3 text-center text-xl ${
+          className={`mt-2 text-base md:mt-3 md:text-lg ${
             theme === "dark"
               ? "text-indigo-300"
               : "text-indigo-600"
@@ -77,7 +77,7 @@ function WelcomePage() {
         </p>
 
         <p
-          className={`mx-auto mt-6 max-w-md text-center leading-7 ${
+          className={`mx-auto mt-3 max-w-md text-sm leading-6 md:mt-4 md:text-base md:leading-7 ${
             theme === "dark"
               ? "text-slate-400"
               : "text-slate-600"
@@ -90,7 +90,7 @@ function WelcomePage() {
 
         {/* Buttons */}
 
-        <div className="mt-10 space-y-4">
+        <div className="mt-6 space-y-3 md:mt-8">
           <Button
             className="w-full py-3"
             onClick={() => navigate("/login")}
@@ -101,9 +101,7 @@ function WelcomePage() {
           <Button
             variant="secondary"
             className="w-full py-3"
-            onClick={() =>
-              navigate("/register")
-            }
+            onClick={() => navigate("/register")}
           >
             Create Free Account
           </Button>
@@ -112,7 +110,7 @@ function WelcomePage() {
         {/* Features */}
 
         <div
-          className={`mt-10 grid grid-cols-1 gap-4 md:grid-cols-3 ${
+          className={`mt-6 grid grid-cols-1 gap-3 md:mt-8 md:grid-cols-3 md:gap-4 ${
             theme === "dark"
               ? "text-slate-300"
               : "text-slate-700"
@@ -127,10 +125,10 @@ function WelcomePage() {
           >
             <MessageSquare
               className="mx-auto mb-2 text-indigo-500"
-              size={24}
+              size={22}
             />
 
-            <p className="font-medium">
+            <p className="text-sm font-medium md:text-base">
               AI Conversations
             </p>
           </div>
@@ -144,10 +142,10 @@ function WelcomePage() {
           >
             <FolderOpen
               className="mx-auto mb-2 text-indigo-500"
-              size={24}
+              size={22}
             />
 
-            <p className="font-medium">
+            <p className="text-sm font-medium md:text-base">
               Smart Workspaces
             </p>
           </div>
@@ -161,10 +159,10 @@ function WelcomePage() {
           >
             <Brain
               className="mx-auto mb-2 text-indigo-500"
-              size={24}
+              size={22}
             />
 
-            <p className="font-medium">
+            <p className="text-sm font-medium md:text-base">
               Your Second Brain
             </p>
           </div>
