@@ -6,8 +6,11 @@ import Button from "../../components/ui/Button";
 
 import { useTheme } from "../../context/ThemeContext";
 
+import { useAuth } from "../../context/AuthContext";
+
 function RegisterPage() {
   const navigate = useNavigate();
+
 
   const { theme } = useTheme();
 
@@ -19,46 +22,24 @@ function RegisterPage() {
   const [password, setPassword] =
     useState("");
 
-  function handleRegister(
-    e: React.FormEvent
-  ) {
-    e.preventDefault();
+const { signup } = useAuth();
 
-    const users = JSON.parse(
-      localStorage.getItem("satiety-users") ??
-        "[]"
-    );
+function handleRegister(e: React.FormEvent) {
+  e.preventDefault();
 
-    if (
-      users.find(
-        (u: any) => u.email === email
-      )
-    ) {
-      alert("User already exists");
-      return;
-    }
+  const success = signup(
+    name.trim(),
+    email.trim().toLowerCase(),
+    password
+  );
 
-    const user = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      password,
-    };
-
-    users.push(user);
-
-    localStorage.setItem(
-      "satiety-users",
-      JSON.stringify(users)
-    );
-
-    localStorage.setItem(
-      "satiety-current-user",
-      JSON.stringify(user)
-    );
-
-    navigate("/");
+  if (!success) {
+    alert("User already exists");
+    return;
   }
+
+  navigate("/");
+}
 
   return (
     <div

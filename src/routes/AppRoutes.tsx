@@ -13,6 +13,7 @@ import SettingsPage from "../pages/SettingsPage";
 import WelcomePage from "../pages/auth/WelcomePage";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -38,17 +39,23 @@ function AppRoutes() {
 
         {/* Main App */}
 
-        <Route element={<AppLayout />}>
-          <Route
-            path="/"
-            element={<HomePage />}
-          />
+<Route
+  element={
+    <ProtectedRoute>
+      <AppLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route
+    path="/"
+    element={<HomePage />}
+  />
 
-          <Route
-            path="/settings"
-            element={<SettingsPage />}
-          />
-        </Route>
+  <Route
+    path="/settings"
+    element={<SettingsPage />}
+  />
+</Route>
 
         {/* Anything else */}
 

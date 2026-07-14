@@ -37,19 +37,11 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] =
-    useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+  const saved = localStorage.getItem(CURRENT_USER_KEY);
 
-  useEffect(() => {
-    const saved =
-      localStorage.getItem(
-        CURRENT_USER_KEY
-      );
-
-    if (saved) {
-      setUser(JSON.parse(saved));
-    }
-  }, []);
+  return saved ? JSON.parse(saved) : null;
+});
 
   function signup(
     name: string,

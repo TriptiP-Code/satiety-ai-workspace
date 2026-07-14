@@ -1,9 +1,3 @@
-// function LoginPage() {
-//   return <h1>Login Page</h1>;
-// }
-
-// export default LoginPage;
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
@@ -12,8 +6,12 @@ import Button from "../../components/ui/Button";
 
 import { useTheme } from "../../context/ThemeContext";
 
+import { useAuth } from "../../context/AuthContext";
+
 function LoginPage() {
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const { theme } = useTheme();
 
@@ -23,31 +21,20 @@ function LoginPage() {
     useState("");
 
   function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const users = JSON.parse(
-      localStorage.getItem("satiety-users") ??
-        "[]"
-    );
+  const success = login(
+    email.trim().toLowerCase(),
+    password
+  );
 
-    const user = users.find(
-      (u: any) =>
-        u.email === email &&
-        u.password === password
-    );
-
-    if (!user) {
-      alert("Invalid credentials");
-      return;
-    }
-
-    localStorage.setItem(
-      "satiety-current-user",
-      JSON.stringify(user)
-    );
-
-    navigate("/");
+  if (!success) {
+    alert("Invalid email or password");
+    return;
   }
+
+  navigate("/");
+}
 
   return (
     <div
