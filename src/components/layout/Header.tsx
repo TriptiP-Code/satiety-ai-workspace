@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Menu, Moon, Sun } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-import ProfileDropdown from "../profile/ProfileDropdown";
+import { useAuth } from "../../context/AuthContext";
+
 
 interface HeaderProps {
   theme: "dark" | "light";
@@ -17,37 +19,51 @@ function Header({
   toggleTheme,
   setSidebarOpen,
 }: HeaderProps) {
-  const [showProfile, setShowProfile] =
-    useState(false);
 
   const profileRef =
     useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleOutsideClick(
-      event: MouseEvent
+    const { user, logout } = useAuth();
+    
+
+const navigate = useNavigate();
+
+const [showProfileMenu, setShowProfileMenu] =
+  useState(false);
+
+  const initials =
+  user?.name
+    ?.split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase() ?? "";
+
+    useEffect(() => {
+  function handleClick(
+    event: MouseEvent
+  ) {
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(
+        event.target as Node
+      )
     ) {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(
-          event.target as Node
-        )
-      ) {
-        setShowProfile(false);
-      }
+      setShowProfileMenu(false);
     }
+  }
 
-    document.addEventListener(
+  document.addEventListener(
+    "mousedown",
+    handleClick
+  );
+
+  return () =>
+    document.removeEventListener(
       "mousedown",
-      handleOutsideClick
+      handleClick
     );
+}, []);
 
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleOutsideClick
-      );
-  }, []);
 
   return (
     <header
@@ -116,27 +132,117 @@ function Header({
         </button>
 
         <div
+  ref={profileRef}
+  className="relative"
+>
+
+  
+
+
+
+  
+
+  <button
+    onClick={() =>
+      setShowProfileMenu((prev) => !prev)
+    }
+    className="
+      ml-3
+      flex
+      h-10
+      w-10
+      items-center
+      justify-center
+      rounded-full
+      bg-gradient-to-r from-indigo-500 to-purple-600
+      text-sm
+      font-semibold
+      text-white
+      transition
+      hover:scale-105
+    "
+  >
+    {initials}
+  </button>
+
+  {showProfileMenu && (
+    <div
+      className={`absolute right-0 mt-3 w-64 rounded-2xl border shadow-xl ${
+        theme === "dark"
+          ? "border-slate-700 bg-slate-900"
+          : "border-slate-200 bg-white"
+      }`}
+    >
+      <div className="border-b p-5">
+
+        <div
+          className="
+            mx-auto
+            mb-3
+            flex
+            h-14
+            w-14
+            items-center
+            justify-center
+            rounded-full
+            bg-gradient-to-r from-indigo-500 to-purple-600
+            text-lg
+            font-bold
+            text-white
+          "
+        >
+          {initials}
+        </div>
+
+        <p className="font-semibold text-center">
+          {user?.name}
+        </p>
+
+        <p
+          className={`text-center text-sm ${
+            theme === "dark"
+              ? "text-slate-400"
+              : "text-slate-600"
+          }`}
+        >
+          {user?.email}
+        </p>
+
+      </div>
+
+      <button
+        onClick={() => {
+          navigate("/settings");
+          setShowProfileMenu(false);
+        }}
+        className={`block w-full px-5 py-3 text-left ${
+          theme === "dark"
+            ? "hover:bg-slate-800"
+            : "hover:bg-slate-100"
+        }`}
+      >
+        ⚙ Settings
+      </button>
+
+      <button
+        onClick={() => {
+          logout();
+          navigate("/welcome");
+        }}
+        className="block w-full px-5 py-3 text-left text-red-500 hover:bg-red-50"
+      >
+        🚪 Logout
+      </button>
+
+    </div>
+  )}
+
+</div>
+
+        <div
           ref={profileRef}
           className="relative"
         >
-          <button
-            onClick={() =>
-              setShowProfile(
-                (prev) => !prev
-              )
-            }
-            className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-all duration-300 hover:scale-105 ${
-              theme === "dark"
-                ? "bg-indigo-600 text-white"
-                : "border border-indigo-200 bg-indigo-100 text-indigo-700"
-            }`}
-          >
-            T
-          </button>
-
-          <ProfileDropdown
-            open={showProfile}
-          />
         </div>
       </div>
     </header>
