@@ -12,8 +12,6 @@ const CONVERSATION_STORAGE_KEY = "satiety-conversations";
 
 const WORKSPACE_STORAGE_KEY = "satiety-workspaces";
 
-const ACTIVE_CHAT_KEY = "satiety-active-chat";
-
 const ACTIVE_WORKSPACE_KEY =
   "satiety-active-workspace";
 
@@ -95,23 +93,8 @@ if (saved) {
     ];
   });
 
-  const [activeConversationId, setActiveConversationId] = useState(() => {
-    const saved = localStorage.getItem(ACTIVE_CHAT_KEY);
-
-    if (saved) {
-      return saved;
-    }
-
-    const savedConversations = localStorage.getItem(CONVERSATION_STORAGE_KEY);
-
-    if (savedConversations) {
-      const parsed: Conversation[] = JSON.parse(savedConversations);
-      return parsed[0].id;
-    }
-
-    return crypto.randomUUID();
-  });
-
+const [activeConversationId, setActiveConversationId] =
+  useState<string | null>(null);
 const [selectedWorkspaceId, setSelectedWorkspaceId] =
   useState(() => {
     return workspaces[0].id;
@@ -131,12 +114,7 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-  localStorage.setItem(
-    ACTIVE_WORKSPACE_KEY,
-    activeWorkspaceId
-  );
-}, [activeWorkspaceId]);
+
 
   useEffect(() => {
   localStorage.setItem(
@@ -152,12 +130,6 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
     );
   }, [conversations]);
 
-  useEffect(() => {
-    localStorage.setItem(
-      ACTIVE_CHAT_KEY,
-      activeConversationId
-    );
-  }, [activeConversationId]);
 
   useEffect(() => {
   localStorage.setItem(THEME_KEY, theme);
@@ -172,11 +144,41 @@ useEffect(() => {
   document.documentElement.classList.add(theme);
 }, [theme]);
 
-  const activeConversation =
-    conversations.find(
-      (conversation) =>
-        conversation.id === activeConversationId
-    ) ?? conversations[0];
+useEffect(() => {
+  const generalWorkspace =
+    workspaces.find((w) => w.isSystem) ??
+    workspaces[0];
+
+  const newConversation: Conversation = {
+    id: crypto.randomUUID(),
+    title: "Untitled Chat",
+    workspace: generalWorkspace.name,
+    workspaceId: generalWorkspace.id,
+    messages: [],
+  };
+
+setConversations((prev) => {
+  const cleaned = prev.filter(
+    (conversation) =>
+      !(
+        conversation.title === "Untitled Chat" &&
+        conversation.messages.length === 0
+      )
+  );
+
+  return [newConversation, ...cleaned];
+});
+
+  setActiveConversationId(newConversation.id);
+  setSelectedWorkspaceId(generalWorkspace.id);
+  setActiveWorkspaceId(generalWorkspace.id);
+}, []);
+
+const activeConversation =
+  conversations.find(
+    (conversation) =>
+      conversation.id === activeConversationId
+  );
 
   const activeWorkspace =
   workspaces.find(

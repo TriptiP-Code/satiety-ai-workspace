@@ -41,9 +41,11 @@ function ChatWindow({
           ? {
               ...conversation,
               title:
-                conversation.messages.length === 0
-                  ? content.slice(0, 30)
-                  : conversation.title,
+conversation.messages.length === 0
+  ? content.length > 40
+      ? content.slice(0, 40) + "..."
+      : content
+  : conversation.title,
               messages: [...conversation.messages, userMessage],
             }
           : conversation
