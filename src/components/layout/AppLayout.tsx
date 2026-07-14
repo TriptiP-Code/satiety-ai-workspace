@@ -7,28 +7,41 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import type { Workspace } from "../../types/workspace";
 import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
+
+
+const THEME_KEY = "satiety-theme";
 
 const CONVERSATION_STORAGE_KEY = "satiety-conversations";
 
 const WORKSPACE_STORAGE_KEY = "satiety-workspaces";
 
-const ACTIVE_WORKSPACE_KEY =
-  "satiety-active-workspace";
-
-const THEME_KEY = "satiety-theme";
+const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
   
 
 function AppLayout() {
+
+  const { user } = useAuth();
+
+  const conversationStorageKey =
+  `${CONVERSATION_STORAGE_KEY}-${user?.id}`;
+
+const workspaceStorageKey =
+  `${WORKSPACE_STORAGE_KEY}-${user?.id}`;
+
+const activeWorkspaceKey =
+  `${ACTIVE_WORKSPACE_KEY}-${user?.id}`;
 
   const { theme, toggleTheme } = useTheme();
 
   const navigate = useNavigate();
 
+
   
 
 const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   const saved = localStorage.getItem(
-    WORKSPACE_STORAGE_KEY
+    workspaceStorageKey
   );
 
   if (saved) {
@@ -51,7 +64,7 @@ const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
 
 
   const [conversations, setConversations] = useState<Conversation[]>(() => {
-    const saved = localStorage.getItem(CONVERSATION_STORAGE_KEY);
+    const saved = localStorage.getItem(conversationStorageKey);
 
 if (saved) {
   const parsed = JSON.parse(saved);
@@ -97,7 +110,7 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
   const [activeWorkspaceId, setActiveWorkspaceId] =
   useState(() => {
     const saved = localStorage.getItem(
-      ACTIVE_WORKSPACE_KEY
+      activeWorkspaceKey
     );
 
     if (saved) return saved;
@@ -112,14 +125,14 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
 
   useEffect(() => {
   localStorage.setItem(
-    WORKSPACE_STORAGE_KEY,
+    workspaceStorageKey,
     JSON.stringify(workspaces)
   );
 }, [workspaces]);
 
   useEffect(() => {
     localStorage.setItem(
-      CONVERSATION_STORAGE_KEY,
+      conversationStorageKey,
       JSON.stringify(conversations)
     );
   }, [conversations]);
