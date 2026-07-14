@@ -16,14 +16,14 @@ function MessageList({
   const containerRef =
     useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-    if (!container) return;
+useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [messages, isLoading]);
 
-    container.scrollTop =
-      container.scrollHeight;
-  }, [messages, isLoading]);
 
   return (
     <div
@@ -44,6 +44,7 @@ function MessageList({
       ))}
 
       {isLoading && <TypingIndicator />}
+      <div ref={bottomRef} />
     </div>
   );
 }
