@@ -124,7 +124,7 @@ useEffect(() => {
   return (
     <aside
   className={`
-    fixed left-0 top-0 z-40 h-screen
+    fixed left-0 top-0 z-40 h-[100dvh] overflow-hidden
     w-72 lg:w-80
     transform transition-all duration-300
     ${
@@ -165,7 +165,7 @@ useEffect(() => {
       </div>
 
       {/* Actions */}
-      <div className="space-y-4 p-4">
+      <div className="shrink-0 space-y-4 p-4">
         <Button
           className="w-full"
           onClick={() => {
@@ -207,7 +207,7 @@ useEffect(() => {
       </div>
 
       {/* Workspaces */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
         <p className={`mb-3 text-xs font-semibold uppercase tracking-wide ${
   theme === "dark"
     ? "text-slate-500"
@@ -313,7 +313,7 @@ useEffect(() => {
 
       {/* Footer */}
       <div
-  className={`sticky bottom-0 border-t px-4 pt-4 pb-8 md:pb-4 ${
+  className={`shrink-0 border-t px-4 pt-4 pb-8 md:pb-4 ${
     theme === "dark"
       ? "border-slate-800 bg-slate-900"
       : "border-slate-300 bg-slate-100"
