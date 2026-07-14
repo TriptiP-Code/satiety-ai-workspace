@@ -16,12 +16,12 @@ function WelcomePage() {
 
   return (
     <div
-      className={`relative flex min-h-screen items-center justify-center overflow-x-hidden px-4 py-4 md:px-6 md:py-10 transition-colors duration-500 ${
-        theme === "dark"
-          ? "bg-slate-950"
-          : "bg-slate-100"
-      }`}
-    >
+  className={`relative min-h-screen overflow-x-hidden overflow-y-auto px-4 py-6 md:flex md:min-h-[100dvh] md:items-center md:justify-center md:px-6 md:py-10 transition-colors duration-500 ${
+    theme === "dark"
+      ? "bg-slate-950"
+      : "bg-slate-100"
+  }`}
+>
       {/* Background Blobs */}
 
       <div className="absolute -left-24 top-20 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl animate-blob" />
@@ -31,11 +31,11 @@ function WelcomePage() {
       <div className="absolute left-1/2 top-1/2 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl animate-blob animation-delay-4000" />
 
       <div
-        className={`relative z-10 w-full max-w-xl rounded-3xl border p-5 sm:p-6 md:p-10 text-center shadow-2xl backdrop-blur-xl transition-all duration-500 ${
-          theme === "dark"
-            ? "border-white/10 bg-white/5"
-            : "border-white/60 bg-white/70"
-        }`}
+        className={`relative z-10 mx-auto w-full max-w-xl rounded-3xl border p-6 md:p-10 text-center shadow-2xl backdrop-blur-xl transition-all duration-500 ${
+  theme === "dark"
+    ? "border-white/10 bg-white/5"
+    : "border-white/60 bg-white/70"
+}`}
       >
         {/* Logo */}
 
