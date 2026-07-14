@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  FolderInput,
+} from "lucide-react";
 
 import type { Conversation } from "../../types/conversation";
+import type { Workspace } from "../../types/workspace";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -13,6 +18,12 @@ interface ConversationItemProps {
     id: string,
     title: string
   ) => void;
+  workspaces: Workspace[];
+
+onMove: (
+  conversationId: string,
+  workspaceId: string
+) => void;
 }
 
 function ConversationItem({
@@ -22,6 +33,8 @@ function ConversationItem({
   onSelect,
   onDelete,
   onRename,
+  workspaces,
+  onMove,
 }: ConversationItemProps) {
   const [isEditing, setIsEditing] =
     useState(false);
@@ -32,6 +45,9 @@ function ConversationItem({
 
   const inputRef =
     useRef<HTMLInputElement>(null);
+
+    const [showMoveMenu, setShowMoveMenu] =
+  useState(false);
 
   useEffect(() => {
     setTitle(conversation.title);
@@ -56,7 +72,7 @@ function ConversationItem({
 
   return (
     <div
-  className={`group flex items-center rounded-lg transition ${
+  className={`relative group flex items-center rounded-lg transition ${
     isActive
       ? theme === "dark"
         ? "bg-indigo-600"
@@ -141,6 +157,53 @@ function ConversationItem({
             >
               <Trash2 size={15} />
             </button>
+            <button
+  onClick={() => {
+    setShowMoveMenu(!showMoveMenu);
+  }}
+  className={`rounded p-1 transition ${
+  theme === "dark"
+    ? "text-slate-400 hover:bg-slate-700 hover:text-white"
+    : "text-slate-500 hover:bg-slate-200 hover:text-slate-900"
+}`}
+>
+  <FolderInput size={15} />
+</button>
+{showMoveMenu && (
+  <div
+    className={`absolute right-0 top-full mt-1 z-50 w-44 rounded-lg border shadow-xl ${
+  theme === "dark"
+    ? "border-slate-700 bg-slate-800"
+    : "border-slate-300 bg-white"
+}`}
+  >
+    {workspaces
+  .filter(
+    (workspace) =>
+      workspace.id !== conversation.workspaceId
+  )
+  .map((workspace) => (
+      <button
+        key={workspace.id}
+        onClick={() => {
+          onMove(
+            conversation.id,
+            workspace.id
+          );
+
+          setShowMoveMenu(false);
+        }}
+        className={`block w-full px-8 py-2 text-left text-sm ${
+          theme === "dark"
+            ? "hover:bg-slate-700"
+            : "hover:bg-slate-100"
+        }`}
+      >
+        📁 {workspace.name}
+      </button>
+    ))}
+  </div>
+)}
           </div>
         </>
       )}

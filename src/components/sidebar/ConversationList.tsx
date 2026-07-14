@@ -1,5 +1,6 @@
 import type { Conversation } from "../../types/conversation";
 import ConversationItem from "./ConversationItem";
+import type { Workspace } from "../../types/workspace";
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -27,13 +28,23 @@ interface ConversationListProps {
     id: string,
     title: string
   ) => void;
+
+  workspaces: Workspace[];
+
+onMoveConversation: (
+  conversationId: string,
+  workspaceId: string
+) => void;
 }
+
 
 function ConversationList({
   conversations,
   activeConversationId,
   theme,
+  workspaces,
   onSelectConversation,
+  onMoveConversation,
   onDeleteConversation,
   onRenameConversation,
 }: ConversationListProps) {
@@ -52,6 +63,8 @@ function ConversationList({
                 activeConversationId ===
                 conversation.id
               }
+               workspaces={workspaces}
+               onMove={onMoveConversation}
               onSelect={
                 onSelectConversation
               }

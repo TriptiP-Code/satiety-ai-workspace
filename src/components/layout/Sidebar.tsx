@@ -23,6 +23,11 @@ interface SidebarProps {
   onNewChat: () => void;
   onNewWorkspace: () => void;
 
+  onMoveConversation: (
+  conversationId: string,
+  workspaceId: string
+) => void;
+
 onSelectWorkspace: (workspaceId: string) => void;
 
 onRenameWorkspace: (
@@ -61,6 +66,7 @@ function Sidebar({
   onDeleteConversation,
   onRenameConversation,
   onSelectConversation,
+  onMoveConversation,
   sidebarOpen,
   setSidebarOpen,
 }: SidebarProps) {
@@ -278,6 +284,8 @@ useEffect(() => {
                     activeConversationId={
                       activeConversationId
                     }
+                    workspaces={workspaces}
+                    onMoveConversation={onMoveConversation}
                     selectedWorkspaceId={
                       selectedWorkspaceId
                     }

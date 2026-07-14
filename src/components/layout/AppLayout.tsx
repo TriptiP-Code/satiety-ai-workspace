@@ -377,6 +377,29 @@ function handleDeleteWorkspace(
     );
   }
 
+  function handleMoveConversation(
+  conversationId: string,
+  workspaceId: string
+) {
+  const workspace = workspaces.find(
+    (w) => w.id === workspaceId
+  );
+
+  if (!workspace) return;
+
+  setConversations((prev) =>
+    prev.map((conversation) =>
+      conversation.id === conversationId
+        ? {
+            ...conversation,
+            workspaceId: workspace.id,
+            workspace: workspace.name,
+          }
+        : conversation
+    )
+  );
+}
+
 
 
   return (
@@ -405,6 +428,7 @@ function handleDeleteWorkspace(
         onNewChat={handleNewChat}
         onNewWorkspace={handleNewWorkspace}
         onRenameWorkspace={handleRenameWorkspace}
+        onMoveConversation={handleMoveConversation}
         onDeleteWorkspace={handleDeleteWorkspace}
         onDeleteConversation={handleDeleteConversation}
         onRenameConversation={handleRenameConversation}
