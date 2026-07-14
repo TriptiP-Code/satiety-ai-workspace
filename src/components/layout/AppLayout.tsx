@@ -34,16 +34,10 @@ const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   if (saved) {
     const parsed: Workspace[] = JSON.parse(saved);
 
-    return parsed.map((workspace) => {
-      if (workspace.name === "General") {
-        return {
-          ...workspace,
-          isSystem: true,
-        };
-      }
-
-      return workspace;
-    });
+ return parsed.map((workspace) => ({
+  ...workspace,
+  isSystem: workspace.name === "General",
+}));
   }
 
   return [

@@ -227,6 +227,7 @@ useEffect(() => {
 <WorkspaceSection
  theme={theme}
   name={workspace.name}
+  isSystem={workspace.isSystem ?? false}
   isSelected={
     selectedWorkspaceId === workspace.id
   }
@@ -234,7 +235,6 @@ useEffect(() => {
     expandedWorkspaceId === workspace.id ||
     hasSearchResult
   }
-  isSystem={workspace.isSystem ?? false}
   onClick={() => {
     onSelectWorkspace(workspace.id);
 
