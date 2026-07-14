@@ -31,7 +31,7 @@ function WelcomePage() {
       <div className="absolute left-1/2 top-1/2 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl animate-blob animation-delay-4000" />
 
       <div
-        className={`relative z-10 w-full max-w-xl rounded-3xl border p-5 sm:p-6 md:p-10 text-center shadow-2xl backdrop-blur-xl transition-all duration-500 ${
+        className={`relative z-10 w-full max-w-md rounded-3xl border p-5 sm:p-6 md:p-10 text-center shadow-2xl backdrop-blur-xl transition-all duration-500 ${
           theme === "dark"
             ? "border-white/10 bg-white/5"
             : "border-white/60 bg-white/70"
@@ -39,7 +39,7 @@ function WelcomePage() {
       >
         {/* Logo */}
 
-        <div className="mb-5 flex justify-center md:mb-8">
+        <div className="mb-4 flex justify-center md:mb-8">
           <div
             className={`rounded-3xl p-3 md:p-5 ${
               theme === "dark"
@@ -90,7 +90,7 @@ function WelcomePage() {
 
         {/* Buttons */}
 
-        <div className="mt-6 space-y-3 md:mt-8">
+        <div className="mt-5 space-y-3 md:mt-8">
           <Button
             className="w-full py-3"
             onClick={() => navigate("/login")}
@@ -110,7 +110,7 @@ function WelcomePage() {
         {/* Features */}
 
         <div
-          className={`mt-6 grid grid-cols-1 gap-3 md:mt-8 md:grid-cols-3 md:gap-4 ${
+          className={`hidden md:grid mt-8 grid-cols-3 gap-4 ${
             theme === "dark"
               ? "text-slate-300"
               : "text-slate-700"
@@ -129,7 +129,7 @@ function WelcomePage() {
             />
 
             <p className="text-sm font-medium md:text-base">
-              AI Conversations
+              AI Chats
             </p>
           </div>
 
