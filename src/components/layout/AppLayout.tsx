@@ -28,23 +28,34 @@ function AppLayout() {
 
   
 
-  const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
+const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
   const saved = localStorage.getItem(
     WORKSPACE_STORAGE_KEY
   );
 
   if (saved) {
-    return JSON.parse(saved);
+    const parsed: Workspace[] = JSON.parse(saved);
+
+    return parsed.map((workspace) => {
+      if (workspace.name === "General") {
+        return {
+          ...workspace,
+          isSystem: true,
+        };
+      }
+
+      return workspace;
+    });
   }
 
   return [
     {
       id: crypto.randomUUID(),
       name: "General",
+      isSystem: true,
     },
   ];
 });
-
 
 
   const [conversations, setConversations] = useState<Conversation[]>(() => {
@@ -229,10 +240,17 @@ function handleNewChat() {
   navigate("/");
 }
 
+
 function handleRenameWorkspace(
   workspaceId: string,
   newName: string
 ) {
+  const targetWorkspace = workspaces.find(
+    (w) => w.id === workspaceId
+  );
+
+  if (targetWorkspace?.isSystem) return;
+
   const name = newName.trim();
 
   if (!name) return;
@@ -260,9 +278,18 @@ function handleRenameWorkspace(
   );
 }
 
+
 function handleDeleteWorkspace(
   workspaceId: string
 ) {
+  const targetWorkspace = workspaces.find(
+    (w) => w.id === workspaceId
+  );
+
+  if (targetWorkspace?.isSystem) {
+    return;
+  }
+
   if (workspaces.length === 1) {
     alert("At least one workspace must exist.");
     return;
@@ -293,9 +320,7 @@ function handleDeleteWorkspace(
     fallbackWorkspace.id
   );
 
-  if (
-    remainingConversations.length > 0
-  ) {
+  if (remainingConversations.length > 0) {
     setActiveConversationId(
       remainingConversations[0].id
     );

@@ -234,6 +234,7 @@ useEffect(() => {
     expandedWorkspaceId === workspace.id ||
     hasSearchResult
   }
+  isSystem={workspace.isSystem ?? false}
   onClick={() => {
     onSelectWorkspace(workspace.id);
 
