@@ -1,7 +1,6 @@
 import type { Message } from "../types/chat";
 
-const API_URL =
-  "https://satiety-ai-workspace-backend.onrender.com/api/chat";
+const API_URL = `${import.meta.env.VITE_API_URL}/chat`;
 
 export async function sendMessage(messages: Message[]) {
 let response: Response;
