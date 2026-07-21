@@ -1,8 +1,8 @@
+import { getToken } from "../utils/token";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
-function getToken() {
-  return localStorage.getItem("access_token");
-}
+
 
 export async function getWorkspacesApi() {
   const response = await fetch(`${API_URL}/workspaces`, {

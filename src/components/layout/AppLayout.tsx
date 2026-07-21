@@ -57,6 +57,9 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
 
   useEffect(() => {
   async function loadWorkspaces() {
+    const data = await getWorkspacesApi();
+
+console.log("WORKSPACES API =", data);
     if (!user) return;
 
     try {
