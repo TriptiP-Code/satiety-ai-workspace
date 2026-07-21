@@ -20,10 +20,12 @@ function LoginPage() {
   const [password, setPassword] =
     useState("");
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(
+  e: React.FormEvent
+) {
   e.preventDefault();
 
-  const success = login(
+  const success = await login(
     email.trim().toLowerCase(),
     password
   );

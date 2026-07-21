@@ -1,15 +1,7 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Navigate, } from "react-router-dom";
 import AppLayout from "../components/layout/AppLayout";
-
 import HomePage from "../pages/HomePage";
 import SettingsPage from "../pages/SettingsPage";
-
 import WelcomePage from "../pages/auth/WelcomePage";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";

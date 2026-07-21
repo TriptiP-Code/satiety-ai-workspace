@@ -1,11 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {
-  Sparkles,
-  Brain,
-  FolderOpen,
-  MessageSquare,
-} from "lucide-react";
-
+import { Sparkles, Brain, FolderOpen, MessageSquare, } from "lucide-react";
 import Button from "../../components/ui/Button";
 import { useTheme } from "../../context/ThemeContext";
 

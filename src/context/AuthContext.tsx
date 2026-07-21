@@ -1,11 +1,22 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
 } from "react";
 
 import type { User } from "../types/user";
+
+import {
+  loginApi,
+  registerApi,
+} from "../services/authApi";
+
+import {
+  saveToken,
+  removeToken,
+  getToken,
+} from "../utils/token";
 
 interface AuthContextType {
   user: User | null;
@@ -13,13 +24,13 @@ interface AuthContextType {
   login: (
     email: string,
     password: string
-  ) => boolean;
+  ) => Promise<boolean>;
 
   signup: (
     name: string,
     email: string,
     password: string
-  ) => boolean;
+  ) => Promise<boolean>;
 
   logout: () => void;
 }
@@ -29,7 +40,6 @@ const AuthContext =
     {} as AuthContextType
   );
 
-const USERS_KEY = "satiety-users";
 const CURRENT_USER_KEY = "satiety-current-user";
 
 export function AuthProvider({
@@ -37,82 +47,81 @@ export function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(() => {
-  const saved = localStorage.getItem(CURRENT_USER_KEY);
+  const [user, setUser] =
+    useState<User | null>(null);
 
-  return saved ? JSON.parse(saved) : null;
-});
+  useEffect(() => {
+    const token = getToken();
 
-  function signup(
+    const savedUser =
+      localStorage.getItem(
+        CURRENT_USER_KEY
+      );
+
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  async function signup(
     name: string,
     email: string,
     password: string
   ) {
-    const users: User[] = JSON.parse(
-      localStorage.getItem(USERS_KEY) ??
-        "[]"
-    );
+    try {
+      const data = await registerApi(
+        name,
+        email,
+        password
+      );
 
-    if (
-      users.find(
-        (user) => user.email === email
-      )
-    ) {
+      if (data.token) {
+        saveToken(data.token);
+      }
+
+      localStorage.setItem(
+        CURRENT_USER_KEY,
+        JSON.stringify(data.user)
+      );
+
+      setUser(data.user);
+
+      return true;
+    } catch (error) {
+      console.error(error);
       return false;
     }
-
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      password,
-    };
-
-    users.push(newUser);
-
-    localStorage.setItem(
-      USERS_KEY,
-      JSON.stringify(users)
-    );
-
-    localStorage.setItem(
-      CURRENT_USER_KEY,
-      JSON.stringify(newUser)
-    );
-
-    setUser(newUser);
-
-    return true;
   }
 
-  function login(
+  async function login(
     email: string,
     password: string
   ) {
-    const users: User[] = JSON.parse(
-      localStorage.getItem(USERS_KEY) ??
-        "[]"
-    );
+    try {
+      const data = await loginApi(
+        email,
+        password
+      );
 
-    const found = users.find(
-      (user) =>
-        user.email === email &&
-        user.password === password
-    );
+      saveToken(data.token);
 
-    if (!found) return false;
+      localStorage.setItem(
+        CURRENT_USER_KEY,
+        JSON.stringify(data.user)
+      );
 
-    localStorage.setItem(
-      CURRENT_USER_KEY,
-      JSON.stringify(found)
-    );
+      setUser(data.user);
 
-    setUser(found);
-
-    return true;
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
   function logout() {
+    removeToken();
+
     localStorage.removeItem(
       CURRENT_USER_KEY
     );
@@ -124,8 +133,8 @@ export function AuthProvider({
     <AuthContext.Provider
       value={{
         user,
-        signup,
         login,
+        signup,
         logout,
       }}
     >

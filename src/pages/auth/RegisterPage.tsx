@@ -24,17 +24,19 @@ function RegisterPage() {
 
 const { signup } = useAuth();
 
-function handleRegister(e: React.FormEvent) {
+async function handleRegister(
+  e: React.FormEvent
+) {
   e.preventDefault();
 
-  const success = signup(
+  const success = await signup(
     name.trim(),
     email.trim().toLowerCase(),
     password
   );
 
   if (!success) {
-    alert("User already exists");
+    alert("Unable to register");
     return;
   }
 
