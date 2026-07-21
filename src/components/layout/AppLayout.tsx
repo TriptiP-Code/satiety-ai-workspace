@@ -19,9 +19,6 @@ const THEME_KEY = "satiety-theme";
 
 const CONVERSATION_STORAGE_KEY = "satiety-conversations";
 
-const WORKSPACE_STORAGE_KEY = "satiety-workspaces";
-
-const ACTIVE_WORKSPACE_KEY = "satiety-active-workspace";
   
 
 function AppLayout() {
@@ -31,11 +28,7 @@ function AppLayout() {
   const conversationStorageKey =
   `${CONVERSATION_STORAGE_KEY}-${user?.id}`;
 
-const workspaceStorageKey =
-  `${WORKSPACE_STORAGE_KEY}-${user?.id}`;
 
-const activeWorkspaceKey =
-  `${ACTIVE_WORKSPACE_KEY}-${user?.id}`;
 
   const { theme, toggleTheme } = useTheme();
 
@@ -184,35 +177,39 @@ const activeConversation =
     (workspace) =>
       workspace.id === activeWorkspaceId
   ) ?? null;
-function handleNewWorkspace() {
+async function handleNewWorkspace() {
   const name = prompt("Workspace name");
 
   if (!name?.trim()) return;
 
-  const workspace: Workspace = {
-    id: crypto.randomUUID(),
-    name: name.trim(),
-  };
+  try {
+    const workspace = await createWorkspaceApi(
+      name.trim()
+    );
 
-  setWorkspaces((prev) => [...prev, workspace]);
+    const newWorkspace: Workspace = {
+      id: workspace.id,
+      name: workspace.name,
+      isSystem: workspace.is_system,
+    };
 
-  const newConversation: Conversation = {
-    id: crypto.randomUUID(),
-    title: "New Chat",
-    workspace: workspace.name,
-    workspaceId: workspace.id,
-    messages: [],
-  };
+    setWorkspaces((prev) => [
+      ...prev,
+      newWorkspace,
+    ]);
 
-  setConversations((prev) => [
-    ...prev,
-    newConversation,
-  ]);
+    setSelectedWorkspaceId(
+      newWorkspace.id
+    );
 
-  setActiveWorkspaceId(workspace.id);
-  setSelectedWorkspaceId(workspace.id);
+    setActiveWorkspaceId(
+      newWorkspace.id
+    );
 
-  setActiveConversationId(newConversation.id);
+  } catch (error) {
+    console.error(error);
+    alert("Unable to create workspace");
+  }
 }
 
 function handleNewChat() {
@@ -241,89 +238,76 @@ function handleNewChat() {
 }
 
 
-function handleRenameWorkspace(
+async function handleRenameWorkspace(
   workspaceId: string,
   newName: string
 ) {
-  const targetWorkspace = workspaces.find(
+  const workspace = workspaces.find(
     (w) => w.id === workspaceId
   );
 
-  if (targetWorkspace?.isSystem) return;
+  if (workspace?.isSystem) return;
 
   const name = newName.trim();
 
   if (!name) return;
 
-  setWorkspaces((prev) =>
-    prev.map((workspace) =>
-      workspace.id === workspaceId
-        ? {
-            ...workspace,
-            name,
-          }
-        : workspace
-    )
-  );
+  try {
+    await renameWorkspaceApi(
+      workspaceId,
+      name
+    );
 
-  setConversations((prev) =>
-    prev.map((conversation) =>
-      conversation.workspaceId === workspaceId
-        ? {
-            ...conversation,
-            workspace: name,
-          }
-        : conversation
-    )
-  );
+    setWorkspaces((prev) =>
+      prev.map((workspace) =>
+        workspace.id === workspaceId
+          ? {
+              ...workspace,
+              name,
+            }
+          : workspace
+      )
+    );
+
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 
-function handleDeleteWorkspace(
+async function handleDeleteWorkspace(
   workspaceId: string
 ) {
-  const targetWorkspace = workspaces.find(
+  const workspace = workspaces.find(
     (w) => w.id === workspaceId
   );
 
-  if (targetWorkspace?.isSystem) {
-    return;
-  }
+  if (workspace?.isSystem) return;
 
-  if (workspaces.length === 1) {
-    alert("At least one workspace must exist.");
-    return;
-  }
-
-  const remainingWorkspaces = workspaces.filter(
-    (workspace) => workspace.id !== workspaceId
-  );
-
-  const remainingConversations =
-    conversations.filter(
-      (conversation) =>
-        conversation.workspaceId !== workspaceId
+  try {
+    await deleteWorkspaceApi(
+      workspaceId
     );
 
-  setWorkspaces(remainingWorkspaces);
+    const remaining =
+      workspaces.filter(
+        (w) => w.id !== workspaceId
+      );
 
-  setConversations(remainingConversations);
+    setWorkspaces(remaining);
 
-  const fallbackWorkspace =
-    remainingWorkspaces[0];
+    if (remaining.length > 0) {
+      setSelectedWorkspaceId(
+        remaining[0].id
+      );
 
-  setSelectedWorkspaceId(
-    fallbackWorkspace.id
-  );
+      setActiveWorkspaceId(
+        remaining[0].id
+      );
+    }
 
-  setActiveWorkspaceId(
-    fallbackWorkspace.id
-  );
-
-  if (remainingConversations.length > 0) {
-    setActiveConversationId(
-      remainingConversations[0].id
-    );
+  } catch (error) {
+    console.error(error);
   }
 }
 
