@@ -5,11 +5,28 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 export async function getWorkspacesApi() {
+  // const response = await fetch(`${API_URL}/workspaces`, {
+  //   headers: {
+  //     Authorization: `Bearer ${getToken()}`,
+  //   },
+  // });
+
+  // if (!response.ok) {
+  //   throw new Error("Failed to fetch workspaces");
+  // }
+
+  // return response.json();
+   const token = getToken();
+
+  console.log("TOKEN =", token);
+
   const response = await fetch(`${API_URL}/workspaces`, {
     headers: {
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`,
     },
   });
+
+  console.log("STATUS =", response.status);
 
   if (!response.ok) {
     throw new Error("Failed to fetch workspaces");
