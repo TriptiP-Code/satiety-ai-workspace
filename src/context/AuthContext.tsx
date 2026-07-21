@@ -76,6 +76,8 @@ export function AuthProvider({
       );
 
       if (data.token) {
+        console.log("LOGIN RESPONSE =", data);
+console.log("TOKEN =", data.token);
         saveToken(data.token);
       }
 
@@ -102,6 +104,9 @@ export function AuthProvider({
         email,
         password
       );
+
+      console.log("LOGIN RESPONSE =", data);
+console.log("TOKEN =", data.token);
 
       saveToken(data.token);
 
