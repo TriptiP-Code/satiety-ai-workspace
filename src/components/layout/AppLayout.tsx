@@ -86,20 +86,10 @@ if (saved) {
 const [activeConversationId, setActiveConversationId] =
   useState<string | null>(null);
 const [selectedWorkspaceId, setSelectedWorkspaceId] =
-  useState(() => {
-    return workspaces[0].id;
-  });
+  useState("");
 
   const [activeWorkspaceId, setActiveWorkspaceId] =
-  useState(() => {
-    const saved = localStorage.getItem(
-      activeWorkspaceKey
-    );
-
-    if (saved) return saved;
-
-    return workspaces[0].id;
-  });
+  useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -153,35 +143,35 @@ useEffect(() => {
   document.documentElement.classList.add(theme);
 }, [theme]);
 
-useEffect(() => {
-  const generalWorkspace =
-    workspaces.find((w) => w.isSystem) ??
-    workspaces[0];
+// useEffect(() => {
+//   const generalWorkspace =
+//     workspaces.find((w) => w.isSystem) ??
+//     workspaces[0];
 
-  const newConversation: Conversation = {
-    id: crypto.randomUUID(),
-    title: "Untitled Chat",
-    workspace: generalWorkspace.name,
-    workspaceId: generalWorkspace.id,
-    messages: [],
-  };
+//   const newConversation: Conversation = {
+//     id: crypto.randomUUID(),
+//     title: "Untitled Chat",
+//     workspace: generalWorkspace.name,
+//     workspaceId: generalWorkspace.id,
+//     messages: [],
+//   };
 
-setConversations((prev) => {
-  const cleaned = prev.filter(
-    (conversation) =>
-      !(
-        conversation.title === "Untitled Chat" &&
-        conversation.messages.length === 0
-      )
-  );
+// setConversations((prev) => {
+//   const cleaned = prev.filter(
+//     (conversation) =>
+//       !(
+//         conversation.title === "Untitled Chat" &&
+//         conversation.messages.length === 0
+//       )
+//   );
 
-  return [newConversation, ...cleaned];
-});
+//   return [newConversation, ...cleaned];
+// });
 
-  setActiveConversationId(newConversation.id);
-  setSelectedWorkspaceId(generalWorkspace.id);
-  setActiveWorkspaceId(generalWorkspace.id);
-}, []);
+//   setActiveConversationId(newConversation.id);
+//   setSelectedWorkspaceId(generalWorkspace.id);
+//   setActiveWorkspaceId(generalWorkspace.id);
+// }, []);
 
 const activeConversation =
   conversations.find(
@@ -193,8 +183,7 @@ const activeConversation =
   workspaces.find(
     (workspace) =>
       workspace.id === activeWorkspaceId
-  ) ?? workspaces[0];
-
+  ) ?? null;
 function handleNewWorkspace() {
   const name = prompt("Workspace name");
 
