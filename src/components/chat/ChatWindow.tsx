@@ -6,6 +6,7 @@ import MessageList from "./MessageList";
 import WelcomeSection from "./WelcomeSection";
 
 import { sendMessage } from "../../services/chatApi";
+import { updateConversationApi } from "../../services/conversationApi";
 
 interface ChatWindowProps {
   activeConversation?: Conversation;
@@ -28,6 +29,14 @@ function ChatWindow({
   async function handleSendMessage(content: string) {
     if (!activeConversation) return;
 
+    const shouldGenerateTitle =
+      activeConversation.messages.length === 0 &&
+      activeConversation.title === "New Chat";
+    const generatedTitle =
+      content.length > 40
+        ? `${content.slice(0, 40)}...`
+        : content;
+
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
@@ -40,12 +49,9 @@ function ChatWindow({
         conversation.id === activeConversation.id
           ? {
               ...conversation,
-              title:
-conversation.messages.length === 0
-  ? content.length > 40
-      ? content.slice(0, 40) + "..."
-      : content
-  : conversation.title,
+              title: shouldGenerateTitle
+                ? generatedTitle
+                : conversation.title,
               messages: [...conversation.messages, userMessage],
             }
           : conversation
@@ -55,6 +61,12 @@ conversation.messages.length === 0
     setIsLoading(true);
 
     try {
+      if (shouldGenerateTitle) {
+        await updateConversationApi(activeConversation.id, {
+          title: generatedTitle,
+        });
+      }
+
       const data = await sendMessage([
   ...activeConversation.messages,
   userMessage,

@@ -2,385 +2,312 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import type { Conversation } from "../../types/conversation";
+import type { Workspace } from "../../types/workspace";
 
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import type { Workspace } from "../../types/workspace";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
 import {
-  getWorkspacesApi,
   createWorkspaceApi,
-  renameWorkspaceApi,
   deleteWorkspaceApi,
+  getWorkspacesApi,
+  renameWorkspaceApi,
 } from "../../services/workspaceApi";
+import {
+  createConversationApi,
+  deleteConversationApi,
+  getConversationsApi,
+  updateConversationApi,
+} from "../../services/conversationApi";
 
 const THEME_KEY = "satiety-theme";
 
-const CONVERSATION_STORAGE_KEY = "satiety-conversations";
-
-  
-
 function AppLayout() {
-
   const { user } = useAuth();
-
-  const conversationStorageKey =
-  `${CONVERSATION_STORAGE_KEY}-${user?.id}`;
-
-
-
   const { theme, toggleTheme } = useTheme();
-
   const navigate = useNavigate();
 
-
-  const [workspaces, setWorkspaces] =
-  useState<Workspace[]>([]);
-
-
-  
-const [conversations, setConversations] =
-  useState<Conversation[]>([]);
-
-const [activeConversationId, setActiveConversationId] =
-  useState<string | null>(null);
-const [selectedWorkspaceId, setSelectedWorkspaceId] =
-  useState("");
-
-  const [activeWorkspaceId, setActiveWorkspaceId] =
-  useState("");
-
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [activeConversationId, setActiveConversationId] =
+    useState<string | null>(null);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
   useEffect(() => {
-  async function loadWorkspaces() {
-    const data = await getWorkspacesApi();
-
-console.log("WORKSPACES API =", data);
-    if (!user) return;
-
-    try {
-      const data = await getWorkspacesApi();
-
-      const formatted = data.map((workspace: any) => ({
-        id: workspace.id,
-        name: workspace.name,
-        isSystem: workspace.is_system,
-      }));
-
-      setWorkspaces(formatted);
-
-      if (formatted.length > 0) {
-        setSelectedWorkspaceId(formatted[0].id);
-        setActiveWorkspaceId(formatted[0].id);
-      }
-      const saved = localStorage.getItem(
-  conversationStorageKey
-);
-
-if (saved) {
-  setConversations(JSON.parse(saved));
-}
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  loadWorkspaces();
-}, [user]);
-
-  useEffect(() => {
-    localStorage.setItem(
-      conversationStorageKey,
-      JSON.stringify(conversations)
-    );
-  }, [conversations]);
-
-
-  useEffect(() => {
-  localStorage.setItem(THEME_KEY, theme);
-}, [theme]);
-
-useEffect(() => {
-  document.documentElement.classList.remove(
-    "light",
-    "dark"
-  );
-
-  document.documentElement.classList.add(theme);
-}, [theme]);
-
-// useEffect(() => {
-//   const generalWorkspace =
-//     workspaces.find((w) => w.isSystem) ??
-//     workspaces[0];
-
-//   const newConversation: Conversation = {
-//     id: crypto.randomUUID(),
-//     title: "Untitled Chat",
-//     workspace: generalWorkspace.name,
-//     workspaceId: generalWorkspace.id,
-//     messages: [],
-//   };
-
-// setConversations((prev) => {
-//   const cleaned = prev.filter(
-//     (conversation) =>
-//       !(
-//         conversation.title === "Untitled Chat" &&
-//         conversation.messages.length === 0
-//       )
-//   );
-
-//   return [newConversation, ...cleaned];
-// });
-
-//   setActiveConversationId(newConversation.id);
-//   setSelectedWorkspaceId(generalWorkspace.id);
-//   setActiveWorkspaceId(generalWorkspace.id);
-// }, []);
-
-const activeConversation =
-  conversations.find(
-    (conversation) =>
-      conversation.id === activeConversationId
-  );
-
-  const activeWorkspace =
-  workspaces.find(
-    (workspace) =>
-      workspace.id === activeWorkspaceId
-  ) ?? null;
-async function handleNewWorkspace() {
-  const name = prompt("Workspace name");
-
-  if (!name?.trim()) return;
-
-  try {
-    const workspace = await createWorkspaceApi(
-      name.trim()
-    );
-
-    const newWorkspace: Workspace = {
-      id: workspace.id,
-      name: workspace.name,
-      isSystem: workspace.is_system,
-    };
-
-    setWorkspaces((prev) => [
-      ...prev,
-      newWorkspace,
-    ]);
-
-    setSelectedWorkspaceId(
-      newWorkspace.id
-    );
-
-    setActiveWorkspaceId(
-      newWorkspace.id
-    );
-
-  } catch (error) {
-    console.error(error);
-    alert("Unable to create workspace");
-  }
-}
-
-function handleNewChat() {
-  const workspace =
-    workspaces.find(
-      (w) => w.id === selectedWorkspaceId
-    ) ?? workspaces[0];
-
-  const newConversation: Conversation = {
-    id: crypto.randomUUID(),
-    title: "New Chat",
-    workspace: workspace.name,
-    workspaceId: workspace.id,
-    messages: [],
-  };
-
-  setConversations((prev) => [
-    ...prev,
-    newConversation,
-  ]);
-
-  setActiveConversationId(newConversation.id);
-
-  // If we're on Settings, go back to chat
-  navigate("/");
-}
-
-
-async function handleRenameWorkspace(
-  workspaceId: string,
-  newName: string
-) {
-  const workspace = workspaces.find(
-    (w) => w.id === workspaceId
-  );
-
-  if (workspace?.isSystem) return;
-
-  const name = newName.trim();
-
-  if (!name) return;
-
-  try {
-    await renameWorkspaceApi(
-      workspaceId,
-      name
-    );
-
-    setWorkspaces((prev) =>
-      prev.map((workspace) =>
-        workspace.id === workspaceId
-          ? {
-              ...workspace,
-              name,
-            }
-          : workspace
-      )
-    );
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
-async function handleDeleteWorkspace(
-  workspaceId: string
-) {
-  const workspace = workspaces.find(
-    (w) => w.id === workspaceId
-  );
-
-  if (workspace?.isSystem) return;
-
-  try {
-    await deleteWorkspaceApi(
-      workspaceId
-    );
-
-    const remaining =
-      workspaces.filter(
-        (w) => w.id !== workspaceId
-      );
-
-    setWorkspaces(remaining);
-
-    if (remaining.length > 0) {
-      setSelectedWorkspaceId(
-        remaining[0].id
-      );
-
-      setActiveWorkspaceId(
-        remaining[0].id
-      );
-    }
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-  function handleDeleteConversation(id: string) 
-  {
-    if (conversations.length === 1) {
-      const newConversation: Conversation = {
-        id: crypto.randomUUID(),
-        title: "New Chat",
-        workspace: "General",
-        messages: [],
-      };
-
-      setConversations([newConversation]);
-      setActiveConversationId(newConversation.id);
+    if (!user) {
+      setWorkspaces([]);
+      setConversations([]);
+      setActiveConversationId(null);
+      setSelectedWorkspaceId("");
       return;
     }
 
+    let cancelled = false;
+
+    async function loadWorkspaceData() {
+      try {
+        const workspaceData = await getWorkspacesApi();
+        const formattedWorkspaces: Workspace[] = workspaceData.map(
+          (workspace: any) => ({
+            id: workspace.id,
+            name: workspace.name,
+            isSystem: workspace.is_system,
+          })
+        );
+
+        const conversationGroups = await Promise.all(
+          formattedWorkspaces.map(async (workspace) => {
+            const workspaceConversations =
+              await getConversationsApi(workspace.id);
+
+            return workspaceConversations.map((conversation: any) => ({
+              id: conversation.id,
+              title: conversation.title,
+              workspaceId: workspace.id,
+              workspace: workspace.name,
+              // Messages are migrated in the next step.
+              messages: [],
+            }));
+          })
+        );
+
+        if (cancelled) return;
+
+        const loadedConversations = conversationGroups.flat();
+
+        setWorkspaces(formattedWorkspaces);
+        setConversations(loadedConversations);
+        setSelectedWorkspaceId(formattedWorkspaces[0]?.id ?? "");
+        setActiveConversationId(loadedConversations[0]?.id ?? null);
+      } catch (error) {
+        console.error(error);
+        if (!cancelled) {
+          alert("Unable to load your workspaces and conversations.");
+        }
+      }
+    }
+
+    loadWorkspaceData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(theme);
+  }, [theme]);
+
+  const activeConversation = conversations.find(
+    (conversation) => conversation.id === activeConversationId
+  );
+
+  async function handleNewWorkspace() {
+    const name = prompt("Workspace name");
+
+    if (!name?.trim()) return;
+
+    try {
+      const workspace = await createWorkspaceApi(name.trim());
+      const newWorkspace: Workspace = {
+        id: workspace.id,
+        name: workspace.name,
+        isSystem: workspace.is_system,
+      };
+
+      setWorkspaces((previous) => [...previous, newWorkspace]);
+      setSelectedWorkspaceId(newWorkspace.id);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to create workspace");
+    }
+  }
+
+  async function handleNewChat() {
+    const workspace =
+      workspaces.find((item) => item.id === selectedWorkspaceId) ??
+      workspaces[0];
+
+    if (!workspace) {
+      alert("Create a workspace before starting a chat.");
+      return;
+    }
+
+    try {
+      const conversation = await createConversationApi(
+        workspace.id,
+        "New Chat"
+      );
+
+      const newConversation: Conversation = {
+        id: conversation.id,
+        title: conversation.title,
+        workspaceId: workspace.id,
+        workspace: workspace.name,
+        messages: [],
+      };
+
+      setConversations((previous) => [
+        newConversation,
+        ...previous,
+      ]);
+      setActiveConversationId(newConversation.id);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Unable to create conversation");
+    }
+  }
+
+  async function handleRenameWorkspace(
+    workspaceId: string,
+    newName: string
+  ) {
+    const workspace = workspaces.find((item) => item.id === workspaceId);
+
+    if (workspace?.isSystem) return;
+
+    const name = newName.trim();
+    if (!name) return;
+
+    try {
+      await renameWorkspaceApi(workspaceId, name);
+
+      setWorkspaces((previous) =>
+        previous.map((item) =>
+          item.id === workspaceId ? { ...item, name } : item
+        )
+      );
+      setConversations((previous) =>
+        previous.map((conversation) =>
+          conversation.workspaceId === workspaceId
+            ? { ...conversation, workspace: name }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Unable to rename workspace");
+    }
+  }
+
+  async function handleDeleteWorkspace(workspaceId: string) {
+    const workspace = workspaces.find((item) => item.id === workspaceId);
+
+    if (workspace?.isSystem) return;
+
+    try {
+      await deleteWorkspaceApi(workspaceId);
+
+      const remainingWorkspaces = workspaces.filter(
+        (item) => item.id !== workspaceId
+      );
+      const remainingConversations = conversations.filter(
+        (conversation) => conversation.workspaceId !== workspaceId
+      );
+
+      setWorkspaces(remainingWorkspaces);
+      setConversations(remainingConversations);
+      setSelectedWorkspaceId(remainingWorkspaces[0]?.id ?? "");
+      setActiveConversationId(remainingConversations[0]?.id ?? null);
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete workspace");
+    }
+  }
+
+  async function handleDeleteConversation(id: string) {
     const index = conversations.findIndex(
       (conversation) => conversation.id === id
     );
-
     const remaining = conversations.filter(
       (conversation) => conversation.id !== id
     );
 
-    setConversations(remaining);
+    try {
+      await deleteConversationApi(id);
+      setConversations(remaining);
 
-    if (activeConversationId === id) {
-      const nextConversation =
-        remaining[index] ?? remaining[index - 1];
-
-      setActiveConversationId(nextConversation.id);
+      if (activeConversationId === id) {
+        const nextConversation =
+          remaining[index] ?? remaining[index - 1];
+        setActiveConversationId(nextConversation?.id ?? null);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete conversation");
     }
   }
 
-  function handleRenameConversation(
-    id: string,
-    newTitle: string
-  ) {
-    const title =
-      newTitle.trim() === ""
-        ? "New Chat"
-        : newTitle.trim();
+  async function handleRenameConversation(id: string, newTitle: string) {
+    const title = newTitle.trim() || "New Chat";
 
-    setConversations((prev) =>
-      prev.map((conversation) =>
-        conversation.id === id
-          ? {
-              ...conversation,
-              title,
-            }
-          : conversation
-      )
-    );
+    try {
+      const updatedConversation = await updateConversationApi(id, { title });
+
+      setConversations((previous) =>
+        previous.map((conversation) =>
+          conversation.id === id
+            ? { ...conversation, title: updatedConversation.title }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Unable to rename conversation");
+    }
   }
 
-  function handleMoveConversation(
-  conversationId: string,
-  workspaceId: string
-) {
-  const workspace = workspaces.find(
-    (w) => w.id === workspaceId
-  );
+  async function handleMoveConversation(
+    conversationId: string,
+    workspaceId: string
+  ) {
+    const workspace = workspaces.find((item) => item.id === workspaceId);
+    if (!workspace) return;
 
-  if (!workspace) return;
+    try {
+      await updateConversationApi(conversationId, { workspaceId });
 
-  setConversations((prev) =>
-    prev.map((conversation) =>
-      conversation.id === conversationId
-        ? {
-            ...conversation,
-            workspaceId: workspace.id,
-            workspace: workspace.name,
-          }
-        : conversation
-    )
-  );
-}
-
-
+      setConversations((previous) =>
+        previous.map((conversation) =>
+          conversation.id === conversationId
+            ? {
+                ...conversation,
+                workspaceId: workspace.id,
+                workspace: workspace.name,
+              }
+            : conversation
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Unable to move conversation");
+    }
+  }
 
   return (
     <div
-   className={`flex h-[100dvh] overflow-hidden transition-colors duration-300 ${
-    theme === "dark"
-      ? "bg-slate-950 text-slate-100"
-      : "bg-slate-100 text-slate-900"
-  }`}
->
-  {sidebarOpen && (
-  <div
-    className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-    onClick={() => setSidebarOpen(false)}
-  />
-)}
+      className={`flex h-[100dvh] overflow-hidden transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-slate-950 text-slate-100"
+          : "bg-slate-100 text-slate-900"
+      }`}
+    >
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <Sidebar
         conversations={conversations}
         sidebarOpen={sidebarOpen}
@@ -389,7 +316,7 @@ async function handleDeleteWorkspace(
         workspaces={workspaces}
         selectedWorkspaceId={selectedWorkspaceId}
         onSelectWorkspace={setSelectedWorkspaceId}
-        activeConversationId={activeConversationId}
+        activeConversationId={activeConversationId ?? ""}
         onNewChat={handleNewChat}
         onNewWorkspace={handleNewWorkspace}
         onRenameWorkspace={handleRenameWorkspace}
@@ -398,22 +325,21 @@ async function handleDeleteWorkspace(
         onDeleteConversation={handleDeleteConversation}
         onRenameConversation={handleRenameConversation}
         onSelectConversation={(id) => {
-    setActiveConversationId(id);
-    navigate("/");
+          setActiveConversationId(id);
+          navigate("/");
 
-    if (window.innerWidth < 1024) {
-        setSidebarOpen(false);
-    }
-}}
+          if (window.innerWidth < 1024) {
+            setSidebarOpen(false);
+          }
+        }}
       />
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <Header
-  theme={theme}
-  toggleTheme={toggleTheme}
-  sidebarOpen={sidebarOpen}
-  setSidebarOpen={setSidebarOpen}
-/>
+          theme={theme}
+          toggleTheme={toggleTheme}
+          setSidebarOpen={setSidebarOpen}
+        />
 
         <main className="flex h-0 flex-1 overflow-hidden">
           <Outlet
