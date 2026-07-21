@@ -8,7 +8,12 @@ import Sidebar from "./Sidebar";
 import type { Workspace } from "../../types/workspace";
 import { useTheme } from "../../context/ThemeContext";
 import { useAuth } from "../../context/AuthContext";
-
+import {
+  getWorkspacesApi,
+  createWorkspaceApi,
+  renameWorkspaceApi,
+  deleteWorkspaceApi,
+} from "../../services/workspaceApi";
 
 const THEME_KEY = "satiety-theme";
 
@@ -37,30 +42,8 @@ const activeWorkspaceKey =
   const navigate = useNavigate();
 
 
-  
-
-const [workspaces, setWorkspaces] = useState<Workspace[]>(() => {
-  const saved = localStorage.getItem(
-    workspaceStorageKey
-  );
-
-  if (saved) {
-    const parsed: Workspace[] = JSON.parse(saved);
-
- return parsed.map((workspace) => ({
-  ...workspace,
-  isSystem: workspace.name === "General",
-}));
-  }
-
-  return [
-    {
-      id: crypto.randomUUID(),
-      name: "General",
-      isSystem: true,
-    },
-  ];
-});
+  const [workspaces, setWorkspaces] =
+  useState<Workspace[]>([]);
 
 
   const [conversations, setConversations] = useState<Conversation[]>(() => {
@@ -122,13 +105,32 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
-
   useEffect(() => {
-  localStorage.setItem(
-    workspaceStorageKey,
-    JSON.stringify(workspaces)
-  );
-}, [workspaces]);
+  async function loadWorkspaces() {
+    if (!user) return;
+
+    try {
+      const data = await getWorkspacesApi();
+
+      const formatted = data.map((workspace: any) => ({
+        id: workspace.id,
+        name: workspace.name,
+        isSystem: workspace.is_system,
+      }));
+
+      setWorkspaces(formatted);
+
+      if (formatted.length > 0) {
+        setSelectedWorkspaceId(formatted[0].id);
+        setActiveWorkspaceId(formatted[0].id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  loadWorkspaces();
+}, [user]);
 
   useEffect(() => {
     localStorage.setItem(
