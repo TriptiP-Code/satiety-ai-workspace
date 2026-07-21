@@ -39,42 +39,9 @@ function AppLayout() {
   useState<Workspace[]>([]);
 
 
-  const [conversations, setConversations] = useState<Conversation[]>(() => {
-    const saved = localStorage.getItem(conversationStorageKey);
-
-if (saved) {
-  const parsed = JSON.parse(saved);
-
-  return parsed.map((conversation: any) => {
-    // Already migrated
-    if (conversation.workspaceId) {
-      return conversation;
-    }
-
-    // Old data
-    const workspaceName =
-      conversation.workspace ?? "General";
-
-    const workspace = workspaces.find(
-      (w) => w.name === workspaceName
-    );
-
-    return {
-      ...conversation,
-      workspaceId:
-        workspace?.id ?? workspaces[0].id,
-    };
-  });
-}
-    return [
-      {
-        id: crypto.randomUUID(),
-        title: "New Chat",
-        workspace: "General",
-        messages: [],
-      },
-    ];
-  });
+  
+const [conversations, setConversations] =
+  useState<Conversation[]>([]);
 
 const [activeConversationId, setActiveConversationId] =
   useState<string | null>(null);
@@ -107,6 +74,13 @@ const [selectedWorkspaceId, setSelectedWorkspaceId] =
         setSelectedWorkspaceId(formatted[0].id);
         setActiveWorkspaceId(formatted[0].id);
       }
+      const saved = localStorage.getItem(
+  conversationStorageKey
+);
+
+if (saved) {
+  setConversations(JSON.parse(saved));
+}
     } catch (error) {
       console.error(error);
     }
