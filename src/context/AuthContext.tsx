@@ -75,11 +75,7 @@ export function AuthProvider({
         password
       );
 
-      if (data.token) {
-        console.log("LOGIN RESPONSE =", data);
-console.log("TOKEN =", data.token);
-        saveToken(data.token);
-      }
+      saveToken(data.token);
 
       localStorage.setItem(
         CURRENT_USER_KEY,
@@ -104,9 +100,6 @@ console.log("TOKEN =", data.token);
         email,
         password
       );
-
-      console.log("LOGIN RESPONSE =", data);
-console.log("TOKEN =", data.token);
 
       saveToken(data.token);
 
